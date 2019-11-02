@@ -16,6 +16,14 @@ As my goal with this project is to learn an entirely new field (music + C++),
 I'm trying to document all my gained knowledge in the
 [`./docs`](https://github.com/TimDaub/wasm-synth/tree/master/docs) folder.
 
+## Install
+
+To install:
+
+```
+$ npm i
+```
+
 ## Run
 
 For development:
