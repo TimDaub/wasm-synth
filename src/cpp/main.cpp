@@ -4,7 +4,7 @@
 using namespace emscripten;
 
 std::string hello() {
-  return "hello world";
+  return "hello world from C++";
 }
 
 EMSCRIPTEN_BINDINGS(my_module) {
