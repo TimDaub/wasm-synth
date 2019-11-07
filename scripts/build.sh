@@ -6,4 +6,8 @@ if [ ! -d $DIR ]; then
   mkdir $DIR
 fi
 
-emcc --bind src/cpp/main.cpp -s WASM=1 -o $DIR/main.js
+emcc src/cpp/main.cpp \
+  -s WASM=1 \
+  -s EXPORTED_FUNCTIONS="['_SinWave']" \
+  -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' \
+  -o $DIR/main.js
