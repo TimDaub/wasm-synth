@@ -28,11 +28,22 @@ synthesizer using web technologies.
 - [Summing up frequencies to play chords?](http://shallowsky.com/blog/programming/python-play-chords.html)
 - [Article on why we hear a clicking sound when suddenly stop outputting a sound wave](https://alemangui.github.io/blog//2015/12/26/ramp-to-value.html)
 - https://en.wikipedia.org/wiki/Damped_sine_wave
+- https://www.dsprelated.com
+- https://docs.cycling74.com/max5/tutorials/msp-tut/mspdigitalaudio.html
+- https://issuu.com/petergoldsborough/docs/thesis
+- https://www.reddit.com/r/synthesizers/comments/544gfd/lets_say_i_want_to_design_and_build_synths_as_a/
+- https://docs.juce.com/master/tutorial_sine_synth.html
+- https://www.researchgate.net/publication/2889345_Envelope_Model_Of_Isolated_Musical_Sounds
+- https://web.eecs.umich.edu/~fessler/course/100/l/l10-synth.pdf
+- https://dsp.stackexchange.com/questions/2555/help-with-equations-for-exponential-adsr-envelope
+- https://www.desmos.com/calculator/nduy9l2pez
 
 ### MIDI
 
 - https://www.midi.org/specifications/item/table-1-summary-of-midi-message
 - http://www.personal.kent.edu/~sbirch/Music_Production/MP-II/MIDI/midi_protocol.htm
+- [It's possible to send MIDI from Ableton Live to the Web MIDI API in OS X](https://stackoverflow.com/questions/43544357/how-to-connect-web-midi-api-to-native-application-like-ableton-live)
+- [Demo of using MIDI in the browser](https://codepen.io/peteranglea/pen/KZrGxo?editors=1111)
 
 ### Misc
 
