@@ -2,3 +2,4 @@ node_modules
 .wasm
 public
 !public/index.html
+.DS_Store

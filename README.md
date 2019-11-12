@@ -13,8 +13,8 @@ Installed and available on your shell:
 ## Docs
 
 As my goal with this project is to learn an entirely new field (music + C++),
-I'm trying to document all my gained knowledge in the
-[`./docs`](https://github.com/TimDaub/wasm-synth/tree/master/docs) folder.
+I'm trying to document all my gained knowledge. It's available as a journal
+[here](https://hackmd.io/fR86Sw1nSFGdeFmgirt7qw?view).
 
 ## Install
 
