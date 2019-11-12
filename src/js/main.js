@@ -1,5 +1,5 @@
 // @format
-import Dygraph from 'dygraphs';
+import Dygraph from "dygraphs";
 
 Module.onRuntimeInitialized = function() {
   var button = document.querySelector("button");
@@ -11,29 +11,30 @@ Module.onRuntimeInitialized = function() {
   function play() {
     const t = 1;
     const f = 261.6256;
-
-    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    let sinWave = Module.cwrap("SinWave", null, [
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const sampleRate = audioCtx.sampleRate * 2;
+    const sinWave = Module.cwrap("SinWave", null, [
       "number",
       "number",
       "number",
       "number",
       "number"
     ]);
-    let l = t * audioCtx.sampleRate;
+
+    let l = t * sampleRate;
     let ptr = _malloc(l);
     let heapBytes = new Uint8Array(Module.HEAPU8.buffer, ptr, l);
     heapBytes.set(new Uint8Array(l));
-    sinWave(heapBytes.byteOffset, f, audioCtx.sampleRate, t, 0.1);
+    sinWave(heapBytes.byteOffset, f, sampleRate, t, 0.1);
     let heapFloats = new Float32Array(
       heapBytes.buffer,
       heapBytes.byteOffset,
       l
     );
 
-    let p = (f * 2 * Math.PI) / audioCtx.sampleRate;
+    let p = (f * 2 * Math.PI) / sampleRate;
     let data = [];
-    for (let i = 0; i < t * audioCtx.sampleRate; i++) {
+    for (let i = 0; i < t * sampleRate; i++) {
       data.push([p * i, heapFloats[i]]);
     }
 
@@ -42,8 +43,8 @@ Module.onRuntimeInitialized = function() {
     let channels = 2;
     var myArrayBuffer = audioCtx.createBuffer(
       channels,
-      t * audioCtx.sampleRate,
-      audioCtx.sampleRate
+      t * sampleRate,
+      sampleRate
     );
     for (let i = 0; i < channels; i++) {
       myArrayBuffer.copyToChannel(heapFloats, i);
@@ -56,6 +57,6 @@ Module.onRuntimeInitialized = function() {
   }
 
   function plot(data) {
-		new Dygraph(document.getElementById("myChart"), data);
+    new Dygraph(document.getElementById("myChart"), data);
   }
 };
