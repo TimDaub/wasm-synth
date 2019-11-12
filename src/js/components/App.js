@@ -1,7 +1,17 @@
 // @format
 import React from "react";
+import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
+import "react-piano/dist/styles.css";
 
 import Graph from "./Graph";
+
+const firstNote = MidiNumbers.fromNote("c3");
+const lastNote = MidiNumbers.fromNote("f5");
+const keyboardShortcuts = KeyboardShortcuts.create({
+  firstNote: firstNote,
+  lastNote: lastNote,
+  keyboardConfig: KeyboardShortcuts.HOME_ROW
+});
 
 export default class App extends React.Component {
   constructor(props) {
@@ -10,12 +20,23 @@ export default class App extends React.Component {
       data: []
     };
 
+    this.playMIDI = this.playMIDI.bind(this);
+    this.keyToFrequency = this.keyToFrequency.bind(this);
     this.play = this.play.bind(this);
   }
 
-  play() {
+	keyToFrequency(num) {
+		// NOTE: From https://en.wikipedia.org/wiki/Piano_key_frequencies
+		return Math.pow(2, (num - 49) / 12) * 440;
+	}
+
+	playMIDI(key) {
+		const	freq = this.keyToFrequency(key);
+		this.play(freq);
+	}
+
+  play(f) {
     const t = 1;
-    const f = 261.6256;
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const sampleRate = audioCtx.sampleRate * 2;
     const sinWave = Module.cwrap("SinWave", null, [
@@ -65,7 +86,15 @@ export default class App extends React.Component {
 
     return (
       <div>
-        <button onClick={this.play}>Play</button>
+        <Piano
+          noteRange={{ first: firstNote, last: lastNote }}
+          playNote={this.playMIDI}
+          stopNote={midiNumber => {
+            // Stop playing a given note - see notes below
+          }}
+          width={1000}
+          keyboardShortcuts={keyboardShortcuts}
+        />
         {data.length ? <Graph data={data} /> : null}
       </div>
     );

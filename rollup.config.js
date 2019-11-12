@@ -5,6 +5,7 @@ import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import babel from "rollup-plugin-babel";
 import replace from "rollup-plugin-replace";
+import css from "rollup-plugin-css-porter";
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
@@ -40,6 +41,7 @@ module.exports = [
       }),
       resolve({ browser: true }),
       commonjs(),
+      css({ minified: production }),
       production && terser()
     ]
   }
