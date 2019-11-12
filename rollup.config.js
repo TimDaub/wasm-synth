@@ -3,6 +3,8 @@ import { terser } from "rollup-plugin-terser";
 import copy from "rollup-plugin-copy";
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
+import babel from "rollup-plugin-babel";
+import replace from "rollup-plugin-replace";
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
@@ -26,9 +28,19 @@ module.exports = [
     input: "src/js/main.js",
     output: {
       file: "public/bundle.js",
-      format: "cjs",
+      format: "iife",
       sourcemap: !production
     },
-    plugins: [resolve({ browser: true }), commonjs(), production && terser()]
+    plugins: [
+      replace({
+        "process.env.NODE_ENV": JSON.stringify("production")
+      }),
+      babel({
+        exclude: "node_modules/**"
+      }),
+      resolve({ browser: true }),
+      commonjs(),
+      production && terser()
+    ]
   }
 ];
