@@ -17,7 +17,7 @@
       "patterns": [
         "src/cpp"
       ],
-      "extensions": "cpp,h"
+      "extensions": "cc,h"
     }
   },
   "devDependencies": {
