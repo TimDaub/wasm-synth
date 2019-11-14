@@ -1,3 +1,3 @@
-[*.{js,yml,json,cpp,html,md,sh}]
+[*.{js,yml,json,cpp,cc,h,html,md,sh}]
 indent_style = space
 indent_size = 2

@@ -16,6 +16,7 @@ const keyboardShortcuts = KeyboardShortcuts.create({
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       data: []
     };
@@ -25,15 +26,15 @@ export default class App extends React.Component {
     this.play = this.play.bind(this);
   }
 
-	keyToFrequency(num) {
-		// NOTE: From https://en.wikipedia.org/wiki/Piano_key_frequencies
-		return Math.pow(2, (num - 49) / 12) * 440;
-	}
+  keyToFrequency(num) {
+    // NOTE: From https://en.wikipedia.org/wiki/Piano_key_frequencies
+    return Math.pow(2, (num - 49) / 12) * 440;
+  }
 
-	playMIDI(key) {
-		const	freq = this.keyToFrequency(key);
-		this.play(freq);
-	}
+  playMIDI(key) {
+    const freq = this.keyToFrequency(key);
+    this.play(freq);
+  }
 
   play(f) {
     const t = 1;
@@ -51,7 +52,7 @@ export default class App extends React.Component {
     let ptr = _malloc(l);
     let heapBytes = new Uint8Array(Module.HEAPU8.buffer, ptr, l);
     heapBytes.set(new Uint8Array(l));
-    sinWave(heapBytes.byteOffset, f, sampleRate, t, 0.1);
+    sinWave(heapBytes.byteOffset);
     let heapFloats = new Float32Array(
       heapBytes.buffer,
       heapBytes.byteOffset,
