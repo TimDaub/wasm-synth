@@ -6,17 +6,13 @@
 
 #define _USE_MATH_DEFINES
 
-Oscillator::Oscillator(Wave wave, float frequency, float sampleRate,
+Oscillator::Oscillator(int wave, float frequency, float sampleRate,
                        float bufferSize) {
   this->wave = wave;
   this->frequency = frequency;
   this->sampleRate = sampleRate;
   this->bufferSize = bufferSize;
 }
-
-void Oscillator::SetWave(Wave wave) {
-  this->wave = wave;
-} 
 
 void Oscillator::SetFrequency(float frequency) {
   this->frequency = frequency;
@@ -40,4 +36,11 @@ std::vector<std::tuple<float, float>> Oscillator::Compute() {
   }
   
   return data;
+}
+
+#include "nbind/nbind.h"
+
+NBIND_CLASS(Oscillator) {
+  construct<int, float, float, float>();
+  method(Compute);
 }

@@ -7,7 +7,13 @@
   </head>
   <body>
     <div id="root"></div>
-    <script src="bundle-wasm.js"></script>
-    <script src="bundle.js"></script>
+    <script src="nbind.js"></script>
+    <script>
+      
+      nbind.init((err, bindings) => {
+        console.log(bindings);
+        window.lib = bindings.lib;
+      });
+    </script>
   </body>
 </html>

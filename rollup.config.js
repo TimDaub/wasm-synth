@@ -13,19 +13,6 @@ const production = !process.env.ROLLUP_WATCH;
 
 module.exports = [
   {
-    input: ".wasm/main.js",
-    output: {
-      file: "public/bundle-wasm.js",
-      format: "cjs"
-    },
-    plugins: [
-      copy({
-        targets: [{ src: ".wasm/*.wasm", dest: "public" }]
-      }),
-      production && terser()
-    ]
-  },
-  {
     input: "src/js/main.js",
     output: {
       file: "public/bundle.js",
