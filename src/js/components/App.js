@@ -2,6 +2,7 @@
 import React from "react";
 import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
 import "react-piano/dist/styles.css";
+import EnvelopeGraph from "react-envelope-graph";
 
 import Graph from "./Graph";
 
@@ -47,6 +48,14 @@ export default class App extends React.Component {
 
     return (
       <div>
+        <EnvelopeGraph
+          height={20}
+          width={100}
+          a={0}
+          d={5}
+          s={1}
+          r={(1 / 4) * 50}
+        />
         <Piano
           noteRange={{ first: firstNote, last: lastNote }}
           playNote={this.playMIDI}
