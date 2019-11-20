@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A synthesizer built from scratch in C++ and made available on the web through WebAssembly.",
   "scripts": {
+    "copy:worklets": "mkdir -p public/worklets && cp src/js/worklets/synth.js public/worklets/synth.js",
     "build:cpp": "./scripts/build.sh",
     "build:js": "rollup -c",
     "build": "npm run build:cpp && npm run build:js",
@@ -18,6 +19,13 @@
         "src/cpp"
       ],
       "extensions": "cc,h"
+    },
+    "copy:worklets": {
+      "patterns": [
+        "src/js/worklets"
+      ],
+      "extensions": "js"
+
     }
   },
   "devDependencies": {
@@ -30,10 +38,11 @@
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-copy": "^3.1.0",
-    "rollup-plugin-css-porter": "^1.0.2",
     "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^5.0.0",
+    "rollup-plugin-worker": "git+https://github.com/johanholmerin/rollup-plugin-worker.git#semver:^2.0.0",
     "serve": "^11.0.2"
   },
   "repository": {

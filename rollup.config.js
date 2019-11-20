@@ -5,7 +5,8 @@ import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import babel from "rollup-plugin-babel";
 import replace from "rollup-plugin-replace";
-import css from "rollup-plugin-css-porter";
+import worker from "rollup-plugin-worker";
+import postcss from "rollup-plugin-postcss";
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
@@ -13,26 +14,16 @@ const production = !process.env.ROLLUP_WATCH;
 
 module.exports = [
   {
-    input: ".wasm/main.js",
-    output: {
-      file: "public/bundle-wasm.js",
-      format: "cjs"
-    },
-    plugins: [
-      copy({
-        targets: [{ src: ".wasm/*.wasm", dest: "public" }]
-      }),
-      production && terser()
-    ]
-  },
-  {
     input: "src/js/main.js",
     output: {
-      file: "public/bundle.js",
-      format: "iife",
+      dir: "public",
+      format: "es",
       sourcemap: !production
     },
     plugins: [
+      postcss({
+        extensions: [".css"]
+      }),
       replace({
         "process.env.NODE_ENV": JSON.stringify("production")
       }),
@@ -41,7 +32,6 @@ module.exports = [
       }),
       resolve({ browser: true }),
       commonjs(),
-      css({ minified: production }),
       production && terser()
     ]
   }

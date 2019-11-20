@@ -7,61 +7,83 @@ import EnvelopeGraph from "react-envelope-graph";
 import Graph from "./Graph";
 
 const firstNote = MidiNumbers.fromNote("c3");
-const lastNote = MidiNumbers.fromNote("f5");
+const lastNote = MidiNumbers.fromNote("f4");
 const keyboardShortcuts = KeyboardShortcuts.create({
   firstNote: firstNote,
   lastNote: lastNote,
   keyboardConfig: KeyboardShortcuts.HOME_ROW
 });
 
+let data = [];
+let worklet, context;
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: []
+      data: [],
+      a: 0,
+      d: 5,
+      s: 0.999,
+      r: (1 / 4) * 50,
+      clicked: false,
+      resume: false
     };
 
-    this.playMIDI = this.playMIDI.bind(this);
-    this.keyToFrequency = this.keyToFrequency.bind(this);
+    this.onNoteOn = this.onNoteOn.bind(this);
+    this.onNoteOff = this.onNoteOff.bind(this);
   }
 
-  keyToFrequency(num) {
-    // NOTE: From https://en.wikipedia.org/wiki/Piano_key_frequencies
-    return Math.pow(2, (num - 49) / 12) * 440;
-  }
+  async resume() {
+    const { clicked, resume } = this.state;
 
-  playMIDI(key) {
-    const freq = this.keyToFrequency(key);
-    const vals = Module.SinWave();
-
-    let p = (123 * 2 * Math.PI) / 44100;
-    let data = [];
-    for (let i = 0; i < 44100; i++) {
-      data.push([p * i, vals.get(i)]);
+    if (!clicked) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      context = new AudioContext();
+      await context.audioWorklet.addModule("./worklets/synth.js");
+      worklet = new AudioWorkletNode(context, "SynthWorklet");
+      worklet.connect(context.destination);
+      this.setState({ clicked: true });
     }
-    this.setState({ data });
+
+    if (!resume) {
+      await context.resume();
+      this.setState({ resume: true });
+    }
+
+    // NOTE: On the first note, we launch the audioContext but want to trigger
+    // a note right afterwards in Piano.playNote. Hence we return true here to
+    // continue the chain of execution.
+    return true;
+  }
+
+  onNoteOn(key) {
+    worklet.port.postMessage({
+      name: "NoteOn",
+      key
+    });
+  }
+
+  onNoteOff(key) {
+    worklet.port.postMessage({
+      name: "NoteOff",
+      key
+    });
   }
 
   render() {
-    const { data } = this.state;
+    const { data, a, d, s, r } = this.state;
 
     return (
       <div>
-        <EnvelopeGraph
-          height={20}
-          width={100}
-          a={0}
-          d={5}
-          s={1}
-          r={(1 / 4) * 50}
-        />
+        <EnvelopeGraph height={20} width={100} a={a} d={d} s={s} r={r} />
         <Piano
           noteRange={{ first: firstNote, last: lastNote }}
-          playNote={this.playMIDI}
-          stopNote={midiNumber => {
-            // Stop playing a given note - see notes below
-          }}
+          playNote={async key =>
+            (await this.resume.bind(this)()) && this.onNoteOn(key)
+          }
+          stopNote={this.onNoteOff}
           width={1000}
           keyboardShortcuts={keyboardShortcuts}
         />

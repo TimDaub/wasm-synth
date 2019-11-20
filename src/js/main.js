@@ -6,5 +6,4 @@ import App from "./components/App";
 
 // NOTE: We only initialize the react app once our wasm modules were
 // successfully loaded.
-Module.onRuntimeInitialized = () =>
-  ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById("root"));

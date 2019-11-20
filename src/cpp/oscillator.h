@@ -1,17 +1,22 @@
+#pragma once
 #include <vector>
 #include <tuple>
 
+#include "types.h"
+#include "adsr_modulator.h"
+#include "voice_manager.h"
+
+using namespace std;
+
 class Oscillator {
 private:
-  int wave, bufferSize;
-  float frequency, sampleRate;
-  float *buffer;
+  int wave, sampleRate;
+  vector<Point> buffer;
+  ADSRModulator *m;
+  friend class VoiceManager;
 
 public:
-  Oscillator(int wave, float frequency, float sampleRate, int bufferSize);
-  //void SetWave(Wave wave);
-  //void SetFrequency(float frequency);
-  //void SetSampleRate(float sampleRate);
-  //void SetBufferSize(float bufferSize);
-  std::vector<std::tuple<float, float>> Compute(std::vector<std::tuple<float, float>>);
+  Oscillator(int wave, int sampleRate);
+  vector<Point> NextSample(int scale, int iteration, int bufferSize);
+  void Connect(ADSRModulator *m);
 };
