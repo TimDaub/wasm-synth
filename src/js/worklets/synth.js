@@ -6,7 +6,6 @@ class SynthWorklet extends AudioWorkletProcessor {
     super();
     this.kernel = Module();
     this.voiceManager = new this.kernel.VoiceManager(sampleRate, 64);
-    this.n = 0;
 
     this.port.onmessage = this.handleEvents.bind(this);
     console.log("Worklet launched successfully");
@@ -14,7 +13,8 @@ class SynthWorklet extends AudioWorkletProcessor {
 
   handleEvents({ data }) {
     if (data.name === "NoteOn") {
-      this.voiceManager.onNoteOn(data.key, 1, 1, 1, 1);
+      console.log("on", data.key);
+      this.voiceManager.onNoteOn(data.key, 0, 2000, 0.5, 10);
     } else if (data.name === "NoteOff") {
       this.voiceManager.onNoteOff(data.key);
     }
@@ -29,12 +29,11 @@ class SynthWorklet extends AudioWorkletProcessor {
     ) {
       const outputChannel = output[channel];
 
-      const sample = this.voiceManager.nextSample(this.n, outputChannel.length);
+      const sample = this.voiceManager.nextSample(outputChannel.length);
       for (let i = 0; i < sample.size(); i++) {
         outputChannel[i] = sample.get(i) * 0.2;
       }
     }
-    this.n++;
     return true;
   }
 }

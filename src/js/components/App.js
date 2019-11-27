@@ -6,8 +6,8 @@ import EnvelopeGraph from "react-envelope-graph";
 
 import Graph from "./Graph";
 
-const firstNote = MidiNumbers.fromNote("c3");
-const lastNote = MidiNumbers.fromNote("f4");
+const firstNote = MidiNumbers.fromNote("c4");
+const lastNote = MidiNumbers.fromNote("f5");
 const keyboardShortcuts = KeyboardShortcuts.create({
   firstNote: firstNote,
   lastNote: lastNote,

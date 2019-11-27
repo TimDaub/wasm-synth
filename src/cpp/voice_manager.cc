@@ -20,14 +20,21 @@ VoiceManager::VoiceManager(int sampleRate, int numOfVoices) : voices() {
 void VoiceManager::OnNoteOn(int key, float xa, float xd, float ys, float xr) {
   Voice *v = FindFreeVoice();
   v->key = key;
+  v->iteration = 0;
   v->isActive = true;
+  v->m->ya = 1.0;
+  v->m->SetXA(xa);
+  v->m->SetXD(xd);
+  v->m->SetYS(ys);
+  v->m->SetXR(xr);
+  v->m->stage = ADSRModulator::ENVELOPE_STAGE_ATTACK;
 }
 
 void VoiceManager::OnNoteOff(int key) {
   for (Voices::iterator it = this->voices.begin(); it != this->voices.end(); ++it) {
     Voice *v = *it;
     if (v->key == key && v->isActive) {
-      v->isActive = false;
+      v->m->stage = ADSRModulator::ENVELOPE_STAGE_RELEASE;
     }
   }
 }
@@ -42,12 +49,18 @@ Voice * VoiceManager::FindFreeVoice() {
   return NULL;
 }
 
-vector<float> VoiceManager::NextSample(int iteration, int bufferSize) {
+vector<float> VoiceManager::NextSample(int bufferSize) {
   vector<float> sample(bufferSize, 0.0f);
   for (Voices::iterator it = this->voices.begin(); it != this->voices.end(); ++it) {
     Voice *v = *it;
+  
+    if (v->m->stage == ADSRModulator::ENVELOPE_STAGE_OFF) {
+      v->isActive = false;
+      continue;
+    }
+
     if (v->isActive) {
-      vector<Point> voiceSample = v->o->NextSample(v->key, iteration, bufferSize);
+      vector<Point> voiceSample = v->NextSample(bufferSize);
         for (int i = 0; i < bufferSize; i++) {
           sample[i] += voiceSample[i].y;
         }

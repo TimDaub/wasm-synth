@@ -14,8 +14,9 @@ private:
   friend class VoiceManager;
 
 public:
-  int key;
+  int key, iteration;
   bool isActive;
   Voice();
   Voice(int sampleRate);
+  vector<Point> NextSample(int bufferSize);
 };

@@ -19,5 +19,5 @@ public:
   VoiceManager(int sampleRate, int numOfVoices);
 	void OnNoteOn(int key, float xa, float xd, float ys, float xr);
 	void OnNoteOff(int key);
-  vector<float> NextSample(int iteration, int bufferSize);
+  vector<float> NextSample(int bufferSize);
 };

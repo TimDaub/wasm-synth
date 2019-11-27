@@ -9,25 +9,35 @@ using namespace std;
 const float ADSRModulator::DECAY_UPPER_LIMIT = 1.0f;
 const float ADSRModulator::RELEASE_LOWER_LIMIT= 0.0f;
 
-ADSRModulator::ADSRModulator(float xa, float ya, float xd, float ys, float xr) {
+ADSRModulator::ADSRModulator(int sampleRate) {
+  this->sampleRate = sampleRate;
+}
+
+ADSRModulator::ADSRModulator(int sampleRate, float xa, float ya, float xd,
+                             float ys, float xr) {
+  this->sampleRate = sampleRate;
   this->xa = xa;
   this->ya = ya;
   this->xd = xd;
   this->ys = ys;
   this->xr = xr;
   this->stage = ENVELOPE_STAGE_ATTACK;
-  this->xs = 0;
+  this->sustainReached = false;
+  this->level = 0.0;
+  this->xMax = 0.0;
 }
 
 void ADSRModulator::SetStage(EnvelopeStage stage) {
   this->stage = stage;
 }
 
-float ADSRModulator::Modulate(float x, float prevX) {
+float ADSRModulator::Modulate(float x) {
     if (this->stage == ENVELOPE_STAGE_ATTACK) {
       float attack = pow(x / this->xa, 1.0f / 3.0f);
 
+      this->level = attack;
       if (attack <= this->ya) {
+        this->xMax = x;
         return attack;
       } else {
         SetStage(ENVELOPE_STAGE_DECAY); 
@@ -42,33 +52,41 @@ float ADSRModulator::Modulate(float x, float prevX) {
 		  float gf = pow((dx - dl) / (du - dl), 3);
 		  float decay = gf * (du - dl) + dl;
       
+      this->level = decay;
       if (decay >= this->ys) {
+        this->xMax = x;
         return decay;
       } else {
+        this->sustainReached = true;
         SetStage(ENVELOPE_STAGE_SUSTAIN);
       }
     }
 
     if (this->stage == ENVELOPE_STAGE_SUSTAIN) {
-      this->xs += x - prevX;
+      this->xMax = x;
+      this->level = this->ys;
       return this->ys;
     }
 
     if (this->stage == ENVELOPE_STAGE_RELEASE) {
-		  float rx = -1.0f * this->ys / this->xr * (x - (this->xa + this->xd + this->xs)) + this->ys;
+		  float rx = -1.0f * this->level / this->xr * (x - this->xMax) + this->level;
 		  float rl = RELEASE_LOWER_LIMIT;
-		  float ru = this->ys;
+      float ru = this->level;
 		  float rf = pow((rx - rl) / (ru - rl), 3);
 		  float release = rf * (ru - rl) + rl;
       if (release > rl) {
         return release;
+      } else {
+        this->xMax = 0.0;
+        this->level = 0.0;
+        this->sustainReached = false;
+        SetStage(ENVELOPE_STAGE_OFF);
       }
     }
-
-    // NOTE: If release has successfully supplied fully, we want to
-    // simply multiply by zero to create silence.
-    SetStage(ENVELOPE_STAGE_OFF);
-    return 0.0f;
+    
+    if(this->stage == ENVELOPE_STAGE_OFF) {
+      return 0.0;
+    }
 }
 
 
@@ -76,13 +94,8 @@ void ADSRModulator::ModulateAmp(vector<Point> &buffer) {
   for (vector<int>::size_type i = 0; i < buffer.size(); i++) {
     float x = buffer[i].x;
 
-    float prevX = 0.0f;
-    if (i >= 1) {
-      prevX = buffer[i - 1].x;
-    }
-
     float y = buffer[i].y;
-    buffer[i].y = y * Modulate(x, prevX);
+    buffer[i].y = y * Modulate(x);
   }
 }
 
@@ -105,7 +118,8 @@ void ADSRModulator::SetXR(float xr) {
 #include <emscripten/bind.h>
 EMSCRIPTEN_BINDINGS(ADSRModulator) {
   emscripten::class_<ADSRModulator>("ADSRModulator")
-    .constructor<float, float, float, float, float>()
+    .constructor<int>()
+    .constructor<int, float, float, float, float, float>()
     .function("modulateAmp", &ADSRModulator::ModulateAmp)
     .function("setXA", &ADSRModulator::SetXA)
     .function("setXD", &ADSRModulator::SetXD)

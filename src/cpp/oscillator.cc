@@ -17,25 +17,16 @@ vector<Point> Oscillator::NextSample(int key, int iteration, int bufferSize) {
     float n = i + iteration * bufferSize;
     float x = 2.0 * M_PI * pow(2.0, (key - 69.0) / 12.0) * 440.0 * n / this->sampleRate;
     // TODO: Integrate tuning later, this might be helpful: https://forum.cockos.com/archive/index.php/t-177881.html
-    float tuning = pow(2.0, 1000/ 1200.0);
+    //float tuning = pow(2.0, 1000/ 1200.0);
     buffer.push_back({x, sin(x)});
   }
-
-  //if (this->m != NULL) {
-  //  this->m->ModulateAmp(this->buffer);
-  //}
-
+  
   return buffer;
-}
-
-void Oscillator::Connect(ADSRModulator *m) {
-  this->m = m;
 }
 
 #include <emscripten/bind.h>
 EMSCRIPTEN_BINDINGS(Oscillator) {
   emscripten::class_<Oscillator>("Oscillator")
     .constructor<int, int>()
-    .function("nextSample", &Oscillator::NextSample)
-    .function("connectModulator", emscripten::select_overload<void(ADSRModulator *m)>(&Oscillator::Connect), emscripten::allow_raw_pointers());
+    .function("nextSample", &Oscillator::NextSample);
 }

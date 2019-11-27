@@ -8,7 +8,10 @@ using namespace std;
 
 class ADSRModulator {
 public:
-  ADSRModulator(float xa, float ya, float xd, float ys, float xr);
+  ADSRModulator(int sampleRate);
+  ADSRModulator(int sampleRate, float xa, float ya, float xd, float ys,
+                float xr);
+
   enum EnvelopeStage {
     ENVELOPE_STAGE_OFF = 0,
     ENVELOPE_STAGE_ATTACK,
@@ -16,6 +19,7 @@ public:
     ENVELOPE_STAGE_SUSTAIN,
     ENVELOPE_STAGE_RELEASE
   };
+
   // NOTE: We want to implement a `modulatePitch` function here too, but to do
   // that we most likely need to manipulate the x value before calculating y...
   // So not sure if a chain like Oscillator <=> Modulator makes sense...
@@ -28,8 +32,10 @@ public:
 
 private:
   EnvelopeStage stage;
-  float xa, ya, xd, xs, ys, xr;
-  float Modulate(float x, float prevX);
+  int sampleRate;
+  bool sustainReached;
+  float xa, ya, xd, ys, xr, level, xMax;
+  float Modulate(float x);
   static const float DECAY_UPPER_LIMIT, RELEASE_LOWER_LIMIT;
-
+  friend class VoiceManager;
 };
