@@ -5,7 +5,6 @@ import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import babel from "rollup-plugin-babel";
 import replace from "rollup-plugin-replace";
-import worker from "rollup-plugin-worker";
 import postcss from "rollup-plugin-postcss";
 
 // `npm run build` -> `production` is true
