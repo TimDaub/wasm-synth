@@ -23,42 +23,43 @@ export default class App extends React.Component {
 
     this.state = {
       data: [],
-      a: 0,
-      d: 5,
-      s: 0.999,
-      r: (1 / 4) * 50,
+      xa: 1,
+      xd: 1,
+      ys: 1,
+      xr: 0.1,
       clicked: false,
       resume: false
     };
 
     this.onNoteOn = this.onNoteOn.bind(this);
     this.onNoteOff = this.onNoteOff.bind(this);
+    this.onEnvelopeChange = this.onEnvelopeChange.bind(this);
+    this.resume = this.resume.bind(this);
   }
 
   async resume() {
-    const { clicked, resume } = this.state;
-
-    if (!clicked) {
+    if (!context) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       context = new AudioContext();
       await context.audioWorklet.addModule("./worklets/synth.js");
       worklet = new AudioWorkletNode(context, "SynthWorklet");
       worklet.connect(context.destination);
-      this.setState({ clicked: true });
     }
 
-    if (!resume) {
+    if (context.state !== "running" && worklet) {
       await context.resume();
-      this.setState({ resume: true });
+      this.initEnvelope();
     }
 
     // NOTE: On the first note, we launch the audioContext but want to trigger
-    // a note right afterwards in Piano.playNote. Hence we return true here to
-    // continue the chain of execution.
-    return true;
+    // a note right afterwards in Piano.playNote. Hence we return true here only
+    // once the context is running and the worklet has been loaded.
+    return context.state === "running" && worklet;
   }
 
-  onNoteOn(key) {
+  async onNoteOn(key) {
+    await this.resume();
+
     worklet.port.postMessage({
       name: "NoteOn",
       key
@@ -72,17 +73,58 @@ export default class App extends React.Component {
     });
   }
 
+  initEnvelope() {
+    const { xa, xd, ys, xr } = this.state;
+
+    this.onEnvelopeChange("xa", xa);
+    this.onEnvelopeChange("xd", xd);
+    this.onEnvelopeChange("ys", ys);
+    this.onEnvelopeChange("xr", xr);
+  }
+
+  onEnvelopeChange(key, value) {
+    worklet.port.postMessage({
+      name: "Envelope",
+      key,
+      value
+    });
+    this.setState({ key: value });
+  }
+
   render() {
-    const { data, a, d, s, r } = this.state;
+    const { data, xa, xd, ys, xr } = this.state;
 
     return (
       <div>
-        <EnvelopeGraph height={20} width={100} a={a} d={d} s={s} r={r} />
+        <EnvelopeGraph
+          width="100%"
+          height="20%"
+          defaultXa={xa}
+          defaultXd={xd}
+          defaultYs={ys}
+          defaultXr={xr}
+          ratio={{
+            xa: 0.25,
+            xd: 0.25,
+            xs: 0.25,
+            xr: 0.25
+          }}
+          onAttackChange={async a =>
+            (await this.resume()) && this.onEnvelopeChange("xa", a)
+          }
+          onDecayChange={async xd =>
+            (await this.resume()) && this.onEnvelopeChange("xd", xd)
+          }
+          onSustainChange={async ys =>
+            (await this.resume()) && this.onEnvelopeChange("ys", ys)
+          }
+          onReleaseChange={async xr =>
+            (await this.resume()) && this.onEnvelopeChange("xr", xr)
+          }
+        />
         <Piano
           noteRange={{ first: firstNote, last: lastNote }}
-          playNote={async key =>
-            (await this.resume.bind(this)()) && this.onNoteOn(key)
-          }
+          playNote={this.onNoteOn}
           stopNote={this.onNoteOff}
           width={1000}
           keyboardShortcuts={keyboardShortcuts}

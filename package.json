@@ -25,7 +25,6 @@
         "src/js/worklets"
       ],
       "extensions": "js"
-
     }
   },
   "devDependencies": {
@@ -65,7 +64,7 @@
     "dygraphs": "^2.1.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
-    "react-envelope-graph": "0.0.1",
+    "react-envelope-graph": "0.0.2",
     "react-piano": "^3.1.3"
   }
 }
