@@ -7,7 +7,7 @@ import EnvelopeGraph from "react-envelope-graph";
 import Graph from "./Graph";
 
 const firstNote = MidiNumbers.fromNote("c4");
-const lastNote = MidiNumbers.fromNote("f5");
+const lastNote = MidiNumbers.fromNote("f7");
 const keyboardShortcuts = KeyboardShortcuts.create({
   firstNote: firstNote,
   lastNote: lastNote,
@@ -23,7 +23,7 @@ export default class App extends React.Component {
 
     this.state = {
       data: [],
-      xa: 1,
+      xa: 0,
       xd: 1,
       ys: 1,
       xr: 0.1,
@@ -122,13 +122,18 @@ export default class App extends React.Component {
             (await this.resume()) && this.onEnvelopeChange("xr", xr)
           }
         />
-        <Piano
-          noteRange={{ first: firstNote, last: lastNote }}
-          playNote={this.onNoteOn}
-          stopNote={this.onNoteOff}
-          width={1000}
-          keyboardShortcuts={keyboardShortcuts}
-        />
+        <div style={{ marginTop: "-4px" }}>
+          <Piano
+            noteRange={{ first: firstNote, last: lastNote }}
+            playNote={this.onNoteOn}
+            stopNote={this.onNoteOff}
+            width={Math.max(
+              document.documentElement.clientWidth,
+              window.innerWidth || 0
+            )}
+            keyboardShortcuts={keyboardShortcuts}
+          />
+        </div>
         {data.length ? <Graph data={data} /> : null}
       </div>
     );
