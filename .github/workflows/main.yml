@@ -15,6 +15,7 @@ jobs:
         with:
           emscripten-version: "1.39.0"
       - run: npm i -g rollup
+      - run: npm i
       - run: npm run build
       - uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
