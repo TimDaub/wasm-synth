@@ -126,4 +126,3 @@ EMSCRIPTEN_BINDINGS(ADSRModulator) {
     .function("setYS", &ADSRModulator::SetYS)
     .function("setXR", &ADSRModulator::SetXR);
 }
-

@@ -17,10 +17,20 @@ vector<Point> Voice::NextSample(int bufferSize) {
   return buf;
 }
 
+void Voice::SetEnvelope(float xa, float xd, float ys, float xr) {
+  const float microseconds = 1000.0 * 1000.0;
+  float c = Oscillator::FrequencyConstant(this->key);
+  m->SetXA(c * xa / microseconds);
+  m->SetXD(c * xd / microseconds);
+  m->SetYS(ys);
+  m->SetXR(c * xr / microseconds);
+}
+
 #include <emscripten/bind.h>
 EMSCRIPTEN_BINDINGS(Voice) {
   emscripten::class_<Voice>("Voice")
     .constructor<>()
     .constructor<int>()
-    .function("nextSample", &Voice::NextSample);
+    .function("nextSample", &Voice::NextSample)
+    .function("setEnvelope", &Voice::SetEnvelope);
 }

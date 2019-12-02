@@ -19,4 +19,5 @@ public:
   Voice();
   Voice(int sampleRate);
   vector<Point> NextSample(int bufferSize);
+  void SetEnvelope(float xa, float xd, float ys, float xr);
 };

@@ -7,6 +7,7 @@
 
 using namespace std;
 
+
 class Oscillator {
 private:
   int wave, sampleRate;
@@ -16,4 +17,5 @@ private:
 public:
   Oscillator(int wave, int sampleRate);
   vector<Point> NextSample(int key, int iteration, int bufferSize);
+  static float FrequencyConstant(int key);
 };

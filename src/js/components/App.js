@@ -24,7 +24,7 @@ export default class App extends React.Component {
     this.state = {
       data: [],
       xa: 0,
-      xd: 1,
+      xd: 0,
       ys: 1,
       xr: 0.1,
       clicked: false,
@@ -44,11 +44,11 @@ export default class App extends React.Component {
       await context.audioWorklet.addModule("./worklets/synth.js");
       worklet = new AudioWorkletNode(context, "SynthWorklet");
       worklet.connect(context.destination);
+      this.initEnvelope();
     }
 
     if (context.state !== "running" && worklet) {
       await context.resume();
-      this.initEnvelope();
     }
 
     // NOTE: On the first note, we launch the audioContext but want to trigger
@@ -76,19 +76,36 @@ export default class App extends React.Component {
   initEnvelope() {
     const { xa, xd, ys, xr } = this.state;
 
-    this.onEnvelopeChange("xa", xa);
+    this.onEnvelopeChange("xa", { xa });
     this.onEnvelopeChange("xd", xd);
     this.onEnvelopeChange("ys", ys);
     this.onEnvelopeChange("xr", xr);
   }
 
   onEnvelopeChange(key, value) {
+    value = this.calcEnvelopeMapping(key, value);
     worklet.port.postMessage({
       name: "Envelope",
       key,
       value
     });
     this.setState({ key: value });
+  }
+
+  calcEnvelopeMapping(key, value) {
+    const microseconds = 1000 * 1000;
+
+    if (key === "xa") {
+      const limit = 20 * microseconds;
+      return {
+        xa: Math.round(Math.exp(Math.log(limit) * value.xa))
+      };
+    } else if (key === "xd" || key === "xr") {
+      const limit = 60 * microseconds;
+      return Math.round(Math.exp(Math.log(limit) * value));
+    } else {
+      return value;
+    }
   }
 
   render() {

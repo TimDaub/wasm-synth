@@ -9,24 +9,42 @@ VoiceManager::VoiceManager(int sampleRate, int numOfVoices) : voices() {
   }
 }
 
-// TODO:
-// - Remove envelope values from OnNoteOn
-// - Initialize Voice (Modulator) with standard values
-// - On VoiceManager, have a method to query for these values
-// - In Synth, on launch read these values and send them to the UI
-// - Update envelope values through VoiceManager and make sure they end up
-// being updated in all voices.
+void VoiceManager::SetXA(float xa) {
+  this->xa = xa;
+  UpdateEnvelope();
+}
 
-void VoiceManager::OnNoteOn(int key, float xa, float xd, float ys, float xr) {
+void VoiceManager::SetXD(float xd) {
+  this->xd = xd;
+  UpdateEnvelope();
+}
+
+void VoiceManager::SetYS(float ys) {
+  this->ys = ys;
+  UpdateEnvelope();
+}
+
+void VoiceManager::SetXR(float xr) {
+  this->xr = xr;
+  UpdateEnvelope();
+}
+
+void VoiceManager::UpdateEnvelope() {
+  for (Voices::iterator it = this->voices.begin(); it != this->voices.end(); ++it) {
+    Voice *v = *it;
+    if (v->isActive) {
+      v->SetEnvelope(this->xa, this->xd, this->ys, this->xr);
+    }
+  }
+}
+
+void VoiceManager::OnNoteOn(int key) {
   Voice *v = FindFreeVoice();
   v->key = key;
   v->iteration = 0;
   v->isActive = true;
   v->m->ya = 1.0;
-  v->m->SetXA(xa);
-  v->m->SetXD(xd);
-  v->m->SetYS(ys);
-  v->m->SetXR(xr);
+  UpdateEnvelope();
   v->m->stage = ADSRModulator::ENVELOPE_STAGE_ATTACK;
 }
 
@@ -76,6 +94,10 @@ EMSCRIPTEN_BINDINGS(VoiceManager) {
     .constructor<int, int>()
     .function("onNoteOn", &VoiceManager::OnNoteOn)
     .function("onNoteOff", &VoiceManager::OnNoteOff)
-    .function("nextSample", &VoiceManager::NextSample);;
+    .function("nextSample", &VoiceManager::NextSample)
+    .function("setXA", &VoiceManager::SetXA)
+    .function("setXD", &VoiceManager::SetXD)
+    .function("setYS", &VoiceManager::SetYS)
+    .function("setXR", &VoiceManager::SetXR);
   emscripten::register_vector<float>("vector<float>");
 }
