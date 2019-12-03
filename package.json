@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A synthesizer built from scratch in C++ and made available on the web through WebAssembly.",
   "scripts": {
-    "copy:worklets": "mkdir -p public/worklets && cp src/js/worklets/synth.js public/worklets/synth.js",
+    "copy:worklets": "mkdir -p public/worklets && cp -a src/js/worklets/. public/worklets/",
     "build:cpp": "./scripts/build.sh",
     "build:js": "rollup -c",
     "build": "npm run build:cpp && npm run build:js && npm run copy:worklets",
