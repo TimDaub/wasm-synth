@@ -1,10 +1,10 @@
 // @format
 import React from "react";
 import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
-import "react-piano/dist/styles.css";
 import EnvelopeGraph from "react-envelope-graph";
+import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 
-import Graph from "./Graph";
+import "react-piano/dist/styles.css";
 
 const firstNote = MidiNumbers.fromNote("c4");
 const lastNote = MidiNumbers.fromNote("f7");
@@ -14,7 +14,86 @@ const keyboardShortcuts = KeyboardShortcuts.create({
   keyboardConfig: KeyboardShortcuts.HOME_ROW
 });
 
-let data = [];
+// For reference: https://visme.co/blog/wp-content/uploads/2016/09/website10.jpg
+const theme = {
+  black: "black",
+  bg: "#19191c",
+  fg: "#4e4e50",
+  primary: "#c3063f",
+  secondary: "#940641"
+};
+
+const GlobalStyle = createGlobalStyle`
+	.body, html {
+		background-color: ${props => props.theme.bg};
+	}
+	.ReactPiano__Key--active.ReactPiano__Key--natural {
+		background: ${props => props.theme.primary};
+		border: none;
+	}
+	.ReactPiano__Key--accidental {
+		border-right-color: ${props => props.theme.fg};
+		border-bottom-color: ${props => props.theme.fg};
+		border-left-color: ${props => props.theme.fg};
+		background-color: ${props => props.theme.fg};
+		border-top: none;
+	}
+	.ReactPiano__Key--active.ReactPiano__Key--accidental {
+		background-color: ${props => props.theme.primary};
+		border-right-color: ${props => props.theme.black};
+		border-bottom-color: ${props => props.theme.black};
+		border-left-color: ${props => props.theme.black};
+		border-top: none;
+	}
+	.ReactPiano__Key--natural {
+		border: none;
+	}
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  margin-bottom: -4px;
+`;
+
+const Footer = styled.footer`
+  background-color: ${props => props.theme.bg};
+
+  // NOTE: This matches the react-piano container and centers the whole
+  // component on the page.
+  div {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+  }
+`;
+
+const envelopeStyles = {
+  line: {
+    fill: "none",
+    stroke: theme.primary,
+    strokeWidth: 2
+  },
+  background: {
+    fill: theme.bg
+  },
+  dndBox: {
+    fill: "none",
+    stroke: "white",
+    strokeWidth: 0.1,
+    height: 1,
+    width: 1
+  },
+  dndBoxActive: {
+    fill: "white"
+  }
+};
+
 let worklet, context;
 
 export default class App extends React.Component {
@@ -22,7 +101,6 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
-      data: [],
       xa: 0,
       xd: 0,
       ys: 1,
@@ -109,50 +187,61 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { data, xa, xd, ys, xr } = this.state;
+    const { xa, xd, ys, xr } = this.state;
 
     return (
-      <div>
-        <EnvelopeGraph
-          width="100%"
-          height="20%"
-          defaultXa={xa}
-          defaultXd={xd}
-          defaultYs={ys}
-          defaultXr={xr}
-          ratio={{
-            xa: 0.25,
-            xd: 0.25,
-            xs: 0.25,
-            xr: 0.25
-          }}
-          onAttackChange={async a =>
-            (await this.resume()) && this.onEnvelopeChange("xa", a)
-          }
-          onDecayChange={async xd =>
-            (await this.resume()) && this.onEnvelopeChange("xd", xd)
-          }
-          onSustainChange={async ys =>
-            (await this.resume()) && this.onEnvelopeChange("ys", ys)
-          }
-          onReleaseChange={async xr =>
-            (await this.resume()) && this.onEnvelopeChange("xr", xr)
-          }
-        />
-        <div style={{ marginTop: "-4px" }}>
-          <Piano
-            noteRange={{ first: firstNote, last: lastNote }}
-            playNote={this.onNoteOn}
-            stopNote={this.onNoteOff}
-            width={Math.max(
-              document.documentElement.clientWidth,
-              window.innerWidth || 0
-            )}
-            keyboardShortcuts={keyboardShortcuts}
-          />
-        </div>
-        {data.length ? <Graph data={data} /> : null}
-      </div>
+      <ThemeProvider theme={theme}>
+        <Container>
+          <GlobalStyle />
+          <Content>
+            <EnvelopeGraph
+              styles={envelopeStyles}
+              width="100%"
+              height="20%"
+              defaultXa={xa}
+              defaultXd={xd}
+              defaultYs={ys}
+              defaultXr={xr}
+              marginTop={3}
+              marginLeft={3}
+              marginBottom={3}
+              marginRight={3}
+              ratio={{
+                xa: 0.25,
+                xd: 0.25,
+                xs: 0.25,
+                xr: 0.25
+              }}
+              onAttackChange={async a =>
+                (await this.resume()) && this.onEnvelopeChange("xa", a)
+              }
+              onDecayChange={async xd =>
+                (await this.resume()) && this.onEnvelopeChange("xd", xd)
+              }
+              onSustainChange={async ys =>
+                (await this.resume()) && this.onEnvelopeChange("ys", ys)
+              }
+              onReleaseChange={async xr =>
+                (await this.resume()) && this.onEnvelopeChange("xr", xr)
+              }
+            />
+          </Content>
+          <Footer>
+            <Piano
+              noteRange={{ first: firstNote, last: lastNote }}
+              playNote={this.onNoteOn}
+              stopNote={this.onNoteOff}
+              width={
+                Math.max(
+                  document.documentElement.clientWidth,
+                  window.innerWidth || 0
+                ) - 200
+              }
+              keyboardShortcuts={keyboardShortcuts}
+            />
+          </Footer>
+        </Container>
+      </ThemeProvider>
     );
   }
 }

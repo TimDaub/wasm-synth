@@ -30,7 +30,28 @@ module.exports = [
         exclude: "node_modules/**"
       }),
       resolve({ browser: true }),
-      commonjs(),
+      // NOTE: styled-components won't compile without this configuration of
+      // commonjs: https://github.com/styled-components/styled-components/issues/1654#issuecomment-441151140
+      commonjs({
+        include: "node_modules/**",
+        // left-hand side can be an absolute path, a path
+        // relative to the current directory, or the name
+        // of a module in node_modules
+        namedExports: {
+          "node_modules/react/index.js": [
+            "cloneElement",
+            "createContext",
+            "Component",
+            "createElement"
+          ],
+          "node_modules/react-dom/index.js": ["render", "hydrate"],
+          "node_modules/react-is/index.js": [
+            "isElement",
+            "isValidElementType",
+            "ForwardRef"
+          ]
+        }
+      }),
       production && terser()
     ]
   }
