@@ -215,7 +215,6 @@ export default class App extends React.Component {
       key,
       value
     });
-    this.setState({ key: value });
   }
 
   calcEnvelopeMapping(key, value) {
@@ -258,10 +257,6 @@ export default class App extends React.Component {
                 defaultXd={xd}
                 defaultYs={ys}
                 defaultXr={xr}
-                marginTop={3}
-                marginLeft={3}
-                marginBottom={3}
-                marginRight={3}
                 ratio={{
                   xa: 0.25,
                   xd: 0.25,
