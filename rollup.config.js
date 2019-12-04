@@ -6,6 +6,7 @@ import commonjs from "rollup-plugin-commonjs";
 import babel from "rollup-plugin-babel";
 import replace from "rollup-plugin-replace";
 import postcss from "rollup-plugin-postcss";
+import url from "@rollup/plugin-url";
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
@@ -20,6 +21,13 @@ module.exports = [
       sourcemap: !production
     },
     plugins: [
+      url({
+        // by default, rollup-plugin-url will not handle font files
+        include: ["**/*.woff", "**/*.woff2"],
+        // setting infinite limit will ensure that the files
+        // are always bundled with the code, not copied to /dist
+        limit: Infinity
+      }),
       postcss({
         extensions: [".css"]
       }),
