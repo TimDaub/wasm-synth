@@ -50,20 +50,36 @@ const GlobalStyle = createGlobalStyle`
 	}
 	.ReactPiano__Key--natural {
 		border: none;
+
+    &:first-child {
+      border-top-left-radius: 1px;
+    }
+    &:last-child {
+      border-top-right-radius: 1px;
+    }
 	}
-  .ReactPiano__Key--natural {
-    box-shadow: inset 0 2px 3px rgba(0,0,0,0.75);
-  }
   .ReactPiano__Key--accidental {
     box-shadow: 0px 5px 7px 1px rgba(0, 0, 0, 0.4);
   }
   .ReactPiano__Key--active.ReactPiano__Key--accidental {
-    box-shadow: 0px 5px 2px 1px rgba(0, 0, 0, 0.2);
-    box-shadow: inset 0px 5px 5px 0px rgba(0,0,0,.25);
+    box-shadow: 0px 5px 2px 1px rgba(0, 0, 0, 0.1);
   }
   .ReactPiano__Keyboard {
     font-family: Arial;
     padding: 0 2px 0 2px;
+    position: relative;
+
+    &::after {
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      content: " ";
+      box-shadow: inset 0 5px 10px 5px rgba(0,0,0,0.4);
+      z-index: 2;
+    }
   }
 `;
 
@@ -96,12 +112,6 @@ const Header = styled.header`
     font-size: 3em;
     font-weight: bold;
     color: ${theme.primary};
-    background-image: url(https://media.giphy.com/media/f4IjBQupqojhqQzKk2/giphy.gif),
-      linear-gradient(rgb(185, 6, 63), rgb(185, 6, 63));
-    background-blend-mode: saturation;
-    background-attachment: fixed;
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
   }
 `;
 
