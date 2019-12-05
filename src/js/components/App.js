@@ -2,10 +2,19 @@
 import React from "react";
 import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
 import EnvelopeGraph from "react-envelope-graph";
-import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
+import { ThemeProvider } from "styled-components";
 import "react-piano/dist/styles.css";
 
-import Plexifont from "../../assets/plexifont-webfont.woff";
+import {
+  theme,
+  GlobalStyle,
+  Content,
+  Container,
+  Header,
+  Footer,
+  CenteredSection,
+  CustomReactPiano
+} from "./UIComponents";
 
 const firstNote = MidiNumbers.fromNote("c4");
 const lastNote = MidiNumbers.fromNote("b6");
@@ -15,120 +24,6 @@ const keyboardShortcuts = KeyboardShortcuts.create({
   keyboardConfig: KeyboardShortcuts.HOME_ROW
 });
 
-// For reference: https://visme.co/blog/wp-content/uploads/2016/09/website10.jpg
-const theme = {
-  black: "black",
-  bg: "#19191c",
-  bg2: "#131415",
-  fg: "#4e4e50",
-  primary: "#c3063f",
-  secondary: "#940641",
-  horizontalPadding: 300
-};
-
-const GlobalStyle = createGlobalStyle`
-  @font-face {
-    font-family: 'Plexifont';
-    src: url(${Plexifont}) format('woff');
-    font-weight: normal;
-    font-style: normal;
-  }
-	.body, html {
-		background-color: ${props => props.theme.bg};
-	}
-	.ReactPiano__Key--active.ReactPiano__Key--natural {
-		background: ${props => props.theme.secondary};
-		border: none;
-	}
-	.ReactPiano__Key--accidental {
-		background-color: ${props => props.theme.bg};
-		border: none;
-	}
-	.ReactPiano__Key--active.ReactPiano__Key--accidental {
-		background-color: ${props => props.theme.secondary};
-		border: none;
-	}
-	.ReactPiano__Key--natural {
-		border: none;
-
-    &:first-child {
-      border-top-left-radius: 1px;
-    }
-    &:last-child {
-      border-top-right-radius: 1px;
-    }
-	}
-  .ReactPiano__Key--accidental {
-    box-shadow: 0px 5px 7px 1px rgba(0, 0, 0, 0.4);
-  }
-  .ReactPiano__Key--active.ReactPiano__Key--accidental {
-    box-shadow: 0px 5px 2px 1px rgba(0, 0, 0, 0.1);
-  }
-  .ReactPiano__Keyboard {
-    font-family: Arial;
-    padding: 0 2px 0 2px;
-    position: relative;
-
-    &::after {
-      pointer-events: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      content: " ";
-      box-shadow: inset 0 5px 10px 5px rgba(0,0,0,0.4);
-      z-index: 2;
-    }
-  }
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-`;
-
-const Content = styled.div`
-  flex: 1;
-  margin-bottom: -4px;
-  margin: 0 ${props => props.theme.horizontalPadding / 2}px 0
-    ${props => props.theme.horizontalPadding / 2}px;
-  background-color: ${props => props.theme.bg2};
-  border-left: 10px solid black;
-  border-right: 10px solid black;
-`;
-
-const CenteredSection = styled.section`
-  display: flex;
-  justify-content: center;
-`;
-
-const Header = styled.header`
-  & > h1 {
-    margin-top: 20px;
-    margin-left: 20px;
-    font-family: "Plexifont";
-    font-size: 3em;
-    font-weight: bold;
-    color: ${theme.primary};
-  }
-`;
-
-const Footer = styled.footer`
-  min-height: 20vh;
-  background-color: black;
-  border-top: 15px solid black;
-
-  // NOTE: This matches the react-piano container and centers the whole
-  // component on the page.
-  div {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 5px;
-  }
-`;
-
 const envelopeStyles = {
   line: {
     fill: "none",
@@ -137,13 +32,13 @@ const envelopeStyles = {
   },
   dndBox: {
     fill: "none",
-    stroke: "white",
+    stroke: theme.white,
     strokeWidth: 0.1,
     height: 1,
     width: 1
   },
   dndBoxActive: {
-    fill: "white"
+    fill: theme.white
   },
   corners: {
     strokeWidth: 0.1,
@@ -253,6 +148,7 @@ export default class App extends React.Component {
       <ThemeProvider theme={theme}>
         <Container>
           <GlobalStyle />
+          <CustomReactPiano />
           <Content>
             <Header>
               <h1>WASM SYNTH</h1>
@@ -270,7 +166,7 @@ export default class App extends React.Component {
                 ratio={{
                   xa: 0.25,
                   xd: 0.25,
-                  xs: 0.25,
+                  xs: 0.5,
                   xr: 0.25
                 }}
                 onAttackChange={async a =>
