@@ -166,7 +166,6 @@ export default class App extends React.Component {
                 ratio={{
                   xa: 0.25,
                   xd: 0.25,
-                  xs: 0.5,
                   xr: 0.25
                 }}
                 onAttackChange={async a =>
