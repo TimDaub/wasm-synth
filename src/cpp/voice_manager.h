@@ -11,7 +11,7 @@ typedef vector<Voice*> Voices;
 
 class VoiceManager {
 private:
-  int numOfVoices, sampleRate, activeVoices;
+  int numOfVoices, sampleRate;
   Voices voices;
   Voice * FindFreeVoice();
   float xa, xd, ys, xr;

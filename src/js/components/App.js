@@ -2,7 +2,7 @@
 import React from "react";
 import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
 import { ThemeProvider } from "styled-components";
-import "react-piano/dist/styles.css";
+import Flex from "react-styled-flexbox";
 
 import EnvelopePanel from "./EnvelopePanel";
 import SynthAdapter from "../SynthAdapter";
@@ -11,10 +11,10 @@ import {
   GlobalStyle,
   Content,
   Container,
-  Header,
+  Logo,
   Footer,
-  CenteredSection,
-  CustomReactPiano
+  CustomReactPiano,
+  ReactPianoStyle
 } from "./UIComponents";
 
 const firstNote = MidiNumbers.fromNote("c4");
@@ -41,15 +41,13 @@ export default class App extends React.Component {
       <ThemeProvider theme={theme}>
         <Container>
           <GlobalStyle />
+          <ReactPianoStyle />
           <CustomReactPiano />
           <Content>
-            <Header>
+            <Logo>
               <h1>WASM SYNTH</h1>
-            </Header>
-            <CenteredSection>
-              <EnvelopePanel synth={this.synth} />
-              />
-            </CenteredSection>
+            </Logo>
+            <EnvelopePanel synth={this.synth} />
           </Content>
           <Footer>
             <Piano

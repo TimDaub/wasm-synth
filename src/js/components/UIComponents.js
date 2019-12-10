@@ -1,13 +1,18 @@
+// @format
 import styled, { createGlobalStyle } from "styled-components";
+import Flex from "react-styled-flexbox";
 
+import _ReactPianoStyle from "react-piano/dist/styles.css";
 import Plexifont from "../../assets/plexifont-webfont.woff";
 
 // For reference: https://visme.co/blog/wp-content/uploads/2016/09/website10.jpg
 export const theme = {
   black: "black",
   white: "white",
-  bg: "#19191c",
-  bg2: "#131415",
+  piano: {
+    black: "#010101"
+  },
+  bg: "rgba(0,0,0,1)",
   fg: "#4e4e50",
   primary: "#c3063f",
   secondary: "#940641",
@@ -15,8 +20,20 @@ export const theme = {
   fonts: {
     logo: "Plexifont",
     display: "Arial"
+  },
+  radius: {
+    heavy: "4px",
+    light: "1px"
+  },
+  margin: {
+    heavy: "15px",
+    light: "10px"
   }
 };
+
+export const ReactPianoStyle = createGlobalStyle`
+  ${_ReactPianoStyle}
+`;
 
 export const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -25,22 +42,23 @@ export const GlobalStyle = createGlobalStyle`
     font-weight: normal;
     font-style: normal;
   }
-	.body, html {
-		background-color: ${props => props.theme.bg};
-	}
+  body, html {
+    background-color: #121212;
+  }
 `;
 
 export const CustomReactPiano = createGlobalStyle`
 	.ReactPiano__Key--active.ReactPiano__Key--natural {
-		background: ${props => props.theme.secondary};
-		border: none;
-	}
-	.ReactPiano__Key--accidental {
-		background-color: ${props => props.theme.bg};
+		background-color: ${props => props.theme.secondary};
 		border: none;
 	}
 	.ReactPiano__Key--active.ReactPiano__Key--accidental {
 		background-color: ${props => props.theme.secondary};
+		border: none;
+    box-shadow: 0px 5px 2px 1px rgba(0, 0, 0, 0.1);
+	}
+	.ReactPiano__Key--accidental {
+		background-color: ${props => props.theme.piano.black};
 		border: none;
 	}
 	.ReactPiano__Key--natural {
@@ -53,12 +71,6 @@ export const CustomReactPiano = createGlobalStyle`
       border-top-right-radius: 1px;
     }
 	}
-  .ReactPiano__Key--accidental {
-    box-shadow: 0px 5px 7px 1px rgba(0, 0, 0, 0.4);
-  }
-  .ReactPiano__Key--active.ReactPiano__Key--accidental {
-    box-shadow: 0px 5px 2px 1px rgba(0, 0, 0, 0.1);
-  }
   .ReactPiano__Keyboard {
     font-family: ${props => props.theme.fonts.display};
     padding: 0 2px 0 2px;
@@ -82,38 +94,47 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  margin: 0 10vh 10px 10vh;
+  & > * {
+    margin-bottom: ${props => props.theme.margin.light};
+  }
 `;
 
 export const Content = styled.div`
+  & > * {
+    margin-bottom: ${props => props.theme.margin.light};
+  }
   flex: 1;
-  margin-bottom: -4px;
-  margin: 0 ${props => props.theme.horizontalPadding / 2}px 0
-    ${props => props.theme.horizontalPadding / 2}px;
-  background-color: ${props => props.theme.bg2};
-  border-left: 10px solid ${props => props.theme.black};
-  border-right: 10px solid ${props => props.theme.black};
 `;
 
-export const CenteredSection = styled.section`
-  display: flex;
-  justify-content: center;
-`;
+export const Logo = styled.header`
+  margin-top: ${props => props.theme.margin.heavy};
 
-export const Header = styled.header`
   & > h1 {
-    margin-top: 20px;
-    margin-left: 20px;
+    border-left: 1px solid black;
+    border-right: 2px solid black;
+    border-bottom: 3px solid black;
+    display: inline-block;
+    padding: ${props => props.theme.margin.heavy};
+    margin: 0;
+    border-radius: ${props => props.theme.radius.heavy};
     font-family: ${props => props.theme.fonts.logo};
     font-size: 3em;
     font-weight: bold;
     color: ${props => props.theme.secondary};
+    background-color: rgba(0, 0, 0, 0.5);
   }
 `;
 
 export const Footer = styled.footer`
   min-height: 20vh;
-  background-color: ${props => props.theme.black};
-  border-top: 15px solid ${props => props.theme.black};
+  margin-bottom: ${props => props.theme.margin.heavy};
+  border-radius: ${props => props.theme.radius.heavy};
+  background-color: rgba(0, 0, 0, 0.5);
+  border-top: 30px solid transparent;
+  border-right: 3px solid black;
+  border-light: 1px solid black;
+  border-bottom: 6px solid black;
 
   // NOTE: This matches the react-piano container and centers the whole
   // component on the page.
@@ -121,5 +142,66 @@ export const Footer = styled.footer`
     display: flex;
     justify-content: center;
     padding-bottom: 5px;
+  }
+`;
+
+export const Panel = styled(Flex)`
+  height: 25vh;
+  border-radius: ${props => props.theme.radius.heavy};
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: ${props => props.theme.margin.light};
+  border-left: 1px solid black;
+  border-right: 2px solid black;
+  border-bottom: 3px solid black;
+
+  & > * {
+  }
+  & > :nth-child(n + 2) {
+    margin-left: ${props => props.theme.margin.light};
+  }
+`;
+
+export const StyledGraph = styled.div`
+  width: 100%;
+  padding: 10px;
+  background-color: ${props => props.theme.bg};
+  border-radius: ${props => props.theme.radius.light};
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 3px solid black;
+`;
+
+export const List = styled(Flex)`
+  width: ${props => props.width};
+`;
+
+export const BorderList = styled(List)`
+  border: 1px solid black;
+`;
+
+export const Row = styled.div`
+  height: 25%;
+  color: ${props => props.theme.white};
+  background-color: ${props => props.theme.bg};
+
+  &:first-child {
+    margin-top: 0;
+    border-top-right-radius: ${props => props.theme.radius.light};
+    border-top-left-radius: ${props => props.theme.radius.light};
+  }
+  &:last-child {
+    border-bottom-right-radius: ${props => props.theme.radius.light};
+    border-bottom-left-radius: ${props => props.theme.radius.light};
+  }
+`;
+
+export const Element = styled(Row)`
+  border-radius: ${props => props.theme.radius.light};
+  margin-top: ${props => props.theme.margin.light};
+  border: 1px solid black;
+
+  &:first-child {
+    margin-top: 0;
   }
 `;

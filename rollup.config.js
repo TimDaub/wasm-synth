@@ -1,6 +1,5 @@
 // @format
 import { terser } from "rollup-plugin-terser";
-import copy from "rollup-plugin-copy";
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import babel from "rollup-plugin-babel";
@@ -29,7 +28,10 @@ module.exports = [
         limit: Infinity
       }),
       postcss({
-        extensions: [".css"]
+        extensions: [".css"],
+        // NOTE: We don't inject css styles, as that would mess with styles coming
+        // from styled-components
+        inject: false
       }),
       replace({
         "process.env.NODE_ENV": JSON.stringify("production")

@@ -3,7 +3,6 @@
 VoiceManager::VoiceManager(int sampleRate, int numOfVoices) : voices() {
   this->sampleRate = sampleRate;
   this->numOfVoices = numOfVoices;
-  this->activeVoices = 0;
   this->voices.reserve(this->numOfVoices);
   for (int i = 0; i < this->numOfVoices; i++) {
     this->voices.push_back(new Voice(sampleRate));
@@ -47,8 +46,6 @@ void VoiceManager::OnNoteOn(int key) {
   v->m->ya = 1.0;
   UpdateEnvelope();
   v->m->stage = ADSRModulator::ENVELOPE_STAGE_ATTACK;
-
-  this->activeVoices++;
 }
 
 void VoiceManager::OnNoteOff(int key) {
@@ -77,14 +74,13 @@ vector<float> VoiceManager::NextSample(int bufferSize) {
   
     if (v->m->stage == ADSRModulator::ENVELOPE_STAGE_OFF && v->isActive) {
       v->isActive = false;
-      this->activeVoices--;
       continue;
     }
 
     if (v->isActive) {
       vector<Point> voiceSample = v->NextSample(bufferSize);
         for (int i = 0; i < bufferSize; i++) {
-          sample[i] += voiceSample[i].y * 1.0/activeVoices;
+          sample[i] += voiceSample[i].y * 0.1;
         }
     }
   }

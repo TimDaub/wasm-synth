@@ -1,8 +1,17 @@
 // @format
 import React from "react";
 import EnvelopeGraph from "react-envelope-graph";
+import Flex from "react-styled-flexbox";
 
-import { theme } from "./UIComponents";
+import {
+  theme,
+  BorderList,
+  Panel,
+  StyledGraph,
+  List,
+  Element,
+  Row
+} from "./UIComponents";
 
 const styles = {
   line: {
@@ -22,8 +31,8 @@ const styles = {
   },
   corners: {
     strokeWidth: 0.1,
-    length: 2,
-    stroke: theme.fg
+    length: 3,
+    stroke: theme.white
   }
 };
 
@@ -36,24 +45,39 @@ export default props => {
   } = props;
 
   return (
-    <EnvelopeGraph
-      styles={styles}
-      style={{ background: theme.bg2, padding: "5%" }}
-      width={"90%"}
-      height="20%"
-      defaultXa={xa}
-      defaultXd={xd}
-      defaultYs={ys}
-      defaultXr={xr}
-      ratio={{
-        xa: 0.25,
-        xd: 0.25,
-        xr: 0.25
-      }}
-      onAttackChange={onEnvelopeChange("xa")}
-      onDecayChange={onEnvelopeChange("xd")}
-      onSustainChange={onEnvelopeChange("ys")}
-      onReleaseChange={onEnvelopeChange("xr")}
-    />
+    <Panel>
+      <List width="50%" directionColumn={true}>
+        <Element />
+        <Element />
+        <Element />
+        <Element />
+      </List>
+      <StyledGraph>
+        <EnvelopeGraph
+          styles={styles}
+          width="100%"
+          height="100%"
+          defaultXa={xa}
+          defaultXd={xd}
+          defaultYs={ys}
+          defaultXr={xr}
+          ratio={{
+            xa: 0.25,
+            xd: 0.25,
+            xr: 0.25
+          }}
+          onAttackChange={onEnvelopeChange("xa")}
+          onDecayChange={onEnvelopeChange("xd")}
+          onSustainChange={onEnvelopeChange("ys")}
+          onReleaseChange={onEnvelopeChange("xr")}
+        />
+      </StyledGraph>
+      <BorderList width="40%" directionColumn={true}>
+        <Row />
+        <Row />
+        <Row />
+        <Row />
+      </BorderList>
+    </Panel>
   );
 };
