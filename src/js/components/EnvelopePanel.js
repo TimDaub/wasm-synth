@@ -2,6 +2,7 @@
 import React from "react";
 import EnvelopeGraph from "react-envelope-graph";
 import Flex from "react-styled-flexbox";
+import Knob from "react-simple-knob";
 
 import {
   theme,
@@ -10,7 +11,9 @@ import {
   StyledGraph,
   List,
   Element,
-  Row
+  Row,
+  Toggle,
+  OscillatorElement
 } from "./UIComponents";
 
 const styles = {
@@ -31,7 +34,7 @@ const styles = {
   },
   corners: {
     strokeWidth: 0.1,
-    length: 3,
+    length: 1.5,
     stroke: theme.white
   }
 };
@@ -44,13 +47,51 @@ export default props => {
     }
   } = props;
 
+  const listTheme = {
+    a: {
+      color: "#FAFAFA",
+      bg: theme.secondary
+    },
+    b: {
+      color: "#FAFAFA",
+      bg: "#2274A5"
+    },
+    c: {
+      color: "#FAFAFA",
+      bg: "#F2D0A4"
+    },
+    d: {
+      color: "#FAFAFA",
+      bg: "#83B692"
+    }
+  };
+
   return (
     <Panel>
-      <List width="50%" directionColumn={true}>
-        <Element />
-        <Element />
-        <Element />
-        <Element />
+      <List width="15%" directionColumn={true}>
+        {/*https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2019/01/25-Bright-Neon-Color-Palettes11.jpg*/}
+        {Object.keys(listTheme).map(k => (
+          <OscillatorElement key={k}>
+            <Knob
+              onChange={console.log}
+              name="Volume"
+              unit="dB"
+              defaultPercentage={0.7}
+              bg={listTheme[k].bg}
+              fg={listTheme[k].color}
+              mouseSpeed={5}
+              transform={p => parseInt(p * 50, 10) - 50}
+              style={{
+                fontSize: 35,
+                height: "80%",
+                color: listTheme[k].color
+              }}
+            />
+            <Toggle bg={listTheme[k].bg} color={listTheme[k].color}>
+              A
+            </Toggle>
+          </OscillatorElement>
+        ))}
       </List>
       <StyledGraph>
         <EnvelopeGraph

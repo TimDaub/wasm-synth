@@ -23,11 +23,12 @@ export const theme = {
   },
   radius: {
     heavy: "4px",
-    light: "1px"
+    light: "2px"
   },
   margin: {
     heavy: "15px",
-    light: "10px"
+    light: "10px",
+    ultralight: "5px"
   }
 };
 
@@ -123,6 +124,7 @@ export const Logo = styled.header`
     font-weight: bold;
     color: ${props => props.theme.secondary};
     background-color: rgba(0, 0, 0, 0.5);
+    user-select: none;
   }
 `;
 
@@ -146,7 +148,7 @@ export const Footer = styled.footer`
 `;
 
 export const Panel = styled(Flex)`
-  height: 25vh;
+  height: 30vh;
   border-radius: ${props => props.theme.radius.heavy};
   background-color: rgba(0, 0, 0, 0.5);
   padding: ${props => props.theme.margin.light};
@@ -198,10 +200,32 @@ export const Row = styled.div`
 
 export const Element = styled(Row)`
   border-radius: ${props => props.theme.radius.light};
-  margin-top: ${props => props.theme.margin.light};
+  margin-top: ${props => props.theme.margin.ultralight};
   border: 1px solid black;
 
   &:first-child {
     margin-top: 0;
   }
+`;
+
+export const OscillatorElement = styled(Element)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const Toggle = styled.div`
+  display: flex;
+  justify-content: center;
+  background-color: ${props => props.bg};
+  align-items: center;
+  color: ${props => props.color};
+  height: 25px;
+  width: 25px;
+  font-size: 10px;
+  border-radius: ${props => props.theme.radius.light};
+  font-family: ${props => props.theme.fonts.display};
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
 `;
