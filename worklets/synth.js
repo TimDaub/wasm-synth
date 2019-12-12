@@ -41,7 +41,7 @@ class SynthWorklet extends AudioWorkletProcessor {
 
       const sample = this.voiceManager.nextSample(outputChannel.length);
       for (let i = 0; i < sample.size(); i++) {
-        outputChannel[i] = sample.get(i) * 0.2;
+        outputChannel[i] = sample.get(i);
       }
     }
     return true;
