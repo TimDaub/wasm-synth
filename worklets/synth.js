@@ -12,21 +12,13 @@ class SynthWorklet extends AudioWorkletProcessor {
   }
 
   handleEvents({ data }) {
-    console.log(data);
     if (data.name === "NoteOn") {
       this.voiceManager.onNoteOn(data.key);
     } else if (data.name === "NoteOff") {
       this.voiceManager.onNoteOff(data.key);
     } else if (data.name === "Envelope") {
-      if (data.key === "xa") {
-        this.voiceManager.setXA(data.value.xa);
-      } else if (data.key === "xd") {
-        this.voiceManager.setXD(data.value);
-      } else if (data.key === "ys") {
-        this.voiceManager.setYS(data.value);
-      } else if (data.key === "xr") {
-        this.voiceManager.setXR(data.value);
-      }
+      const { index, xa, xd, ys, xr, ya } = data.values;
+      this.voiceManager.updateEnvelope(index, xa, xd, ys, xr, ya);
     }
   }
 
