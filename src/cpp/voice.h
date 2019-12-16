@@ -1,23 +1,28 @@
 #pragma once
+#include <numeric>
+
 #include "oscillator.h"
 #include "voice_manager.h"
 #include "adsr_modulator.h"
 
 class Oscillator;
 
+typedef vector<Oscillator *> Oscillators;
+typedef vector<ADSRModulator *> ADSRModulators;
+
 class Voice {
 private:
-  // NOTE: For now, we only allow a single Oscillator. In the future, we
-  // can add an array here.
-  Oscillator *o;
-  ADSRModulator *m;
+  Oscillators oscillators;
+  ADSRModulators modulators;
   friend class VoiceManager;
 
 public:
-  int key, iteration;
+  int key, iteration, numOfOscillators;
   bool isActive;
   Voice();
-  Voice(int sampleRate);
-  vector<Point> NextSample(int bufferSize);
-  void SetEnvelope(float xa, float xd, float ys, float xr);
+  Voice(int sampleRate, int numOfOscillators);
+  vector<float> NextSample(int bufferSize);
+  void SetEnvelope(int i, EnvelopePreset envelope);
+  void SetLevel(int i, float value);
+  void SetStage(ADSRModulator::EnvelopeStage stage);
 };

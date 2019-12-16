@@ -6,11 +6,18 @@
 
 using namespace std;
 
+struct EnvelopePreset {
+  float xa;
+  float xd;
+  float ys;
+  float xr;
+  float ya;
+};
+
 class ADSRModulator {
 public:
+  ADSRModulator();
   ADSRModulator(int sampleRate);
-  ADSRModulator(int sampleRate, float xa, float ya, float xd, float ys,
-                float xr);
 
   enum EnvelopeStage {
     ENVELOPE_STAGE_OFF = 0,
@@ -20,15 +27,16 @@ public:
     ENVELOPE_STAGE_RELEASE
   };
 
-  // NOTE: We want to implement a `modulatePitch` function here too, but to do
-  // that we most likely need to manipulate the x value before calculating y...
-  // So not sure if a chain like Oscillator <=> Modulator makes sense...
-  void ModulateAmp(vector<Point> &buffer);
+  // NOTE: `ModulateAmp` returns a bool to signalize if it's state is off.
+  // Returning `true`, means that modulation has completed.
+  bool ModulateAmp(vector<Point> &buffer);
   void SetXA(float xa);
   void SetXD(float xd);
   void SetYS(float ys);
   void SetXR(float xr);
+  void SetYA(float ya);
   void SetStage(EnvelopeStage stage);
+  EnvelopeStage GetStage();
 
 private:
   EnvelopeStage stage;

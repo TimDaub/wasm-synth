@@ -19,7 +19,8 @@ export default class SynthAdapter {
         xa: 0,
         xd: 0,
         ys: 1,
-        xr: 0.5
+        xr: 0.5,
+        ya: 1
       };
     } else {
       throw new Error(
@@ -33,6 +34,7 @@ export default class SynthAdapter {
     this.onEnvelopeChange = this.onEnvelopeChange.bind(this);
     this.onNoteOn = this.onNoteOn.bind(this);
     this.onNoteOff = this.onNoteOff.bind(this);
+    this.onLevelChange = this.onLevelChange.bind(this);
   }
 
   async init() {
@@ -42,11 +44,13 @@ export default class SynthAdapter {
       this.worklet = new AudioWorkletNode(this.context, this.moduleId);
       this.worklet.connect(this.context.destination);
 
-      const { xa, xd, ys, xr } = this.envelope;
-      this.onEnvelopeChange("xa")({ xa });
-      this.onEnvelopeChange("xd")(xd);
-      this.onEnvelopeChange("ys")(ys);
-      this.onEnvelopeChange("xr")(xr);
+      // TODO: We assume 4 oscillators here, but actually we should define
+      // them in a constants file
+      for (let i = 0; i < 4; i++) {
+        this.onEnvelopeChange(i)(this.envelope);
+        // TODO: Constant
+        this.onLevelChange(i)(0.25);
+      }
     }
 
     if (this.context.state !== "running" && this.worklet) {
@@ -75,32 +79,48 @@ export default class SynthAdapter {
     });
   }
 
-  onEnvelopeChange(key) {
+  onLevelChange(index) {
     return async value => {
       if (!(await this.init())) return;
 
-      value = SynthAdapter.calcEnvelopeMapping(key, value);
       this.worklet.port.postMessage({
-        name: "Envelope",
-        key,
-        value
+        name: "Level",
+        values: {
+          index,
+          value
+        }
       });
     };
   }
 
-  static calcEnvelopeMapping(key, value) {
+  onEnvelopeChange(oscIndex) {
+    return async values => {
+      if (!(await this.init())) return;
+
+      this.worklet.port.postMessage({
+        name: "Envelope",
+        values: Object.assign(
+          { index: oscIndex },
+          SynthAdapter.calcEnvelopeMapping(values)
+        )
+      });
+    };
+  }
+
+  static calcEnvelopeMapping(values) {
+    // TODO: Put into constants file
     const microseconds = 1000 * 1000;
 
-    if (key === "xa") {
-      const limit = 20 * microseconds;
-      return {
-        xa: Math.round(Math.exp(Math.log(limit) * value.xa))
-      };
-    } else if (key === "xd" || key === "xr") {
-      const limit = 60 * microseconds;
-      return Math.round(Math.exp(Math.log(limit) * value));
-    } else {
-      return value;
-    }
+    const xa = Math.round(Math.exp(Math.log(20 * microseconds) * values.xa));
+    const xd = Math.round(Math.exp(Math.log(60 * microseconds) * values.xd));
+    const xr = Math.round(Math.exp(Math.log(60 * microseconds) * values.xr));
+
+    return {
+      xa,
+      xd,
+      xr,
+      ya: values.ya,
+      ys: values.ys
+    };
   }
 }

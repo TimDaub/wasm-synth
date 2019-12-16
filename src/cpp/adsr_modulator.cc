@@ -9,18 +9,10 @@ using namespace std;
 const float ADSRModulator::DECAY_UPPER_LIMIT = 1.0f;
 const float ADSRModulator::RELEASE_LOWER_LIMIT= 0.0f;
 
+ADSRModulator::ADSRModulator() {}
+
 ADSRModulator::ADSRModulator(int sampleRate) {
   this->sampleRate = sampleRate;
-}
-
-ADSRModulator::ADSRModulator(int sampleRate, float xa, float ya, float xd,
-                             float ys, float xr) {
-  this->sampleRate = sampleRate;
-  this->xa = xa;
-  this->ya = ya;
-  this->xd = xd;
-  this->ys = ys;
-  this->xr = xr;
   this->stage = ENVELOPE_STAGE_ATTACK;
   this->sustainReached = false;
   this->level = 0.0;
@@ -29,6 +21,10 @@ ADSRModulator::ADSRModulator(int sampleRate, float xa, float ya, float xd,
 
 void ADSRModulator::SetStage(EnvelopeStage stage) {
   this->stage = stage;
+}
+
+ADSRModulator::EnvelopeStage ADSRModulator::GetStage() {
+  return stage;
 }
 
 float ADSRModulator::Modulate(float x) {
@@ -90,13 +86,14 @@ float ADSRModulator::Modulate(float x) {
 }
 
 
-void ADSRModulator::ModulateAmp(vector<Point> &buffer) {
+bool ADSRModulator::ModulateAmp(vector<Point> &buffer) {
   for (vector<int>::size_type i = 0; i < buffer.size(); i++) {
     float x = buffer[i].x;
-
     float y = buffer[i].y;
+
     buffer[i].y = y * Modulate(x);
   }
+  return ADSRModulator::ENVELOPE_STAGE_OFF == stage;
 }
 
 void ADSRModulator::SetXA(float xa) {
@@ -115,14 +112,21 @@ void ADSRModulator::SetXR(float xr) {
   this->xr = xr;
 }
 
+void ADSRModulator::SetYA(float ya) {
+  this->ya = ya;
+}
+
 #include <emscripten/bind.h>
 EMSCRIPTEN_BINDINGS(ADSRModulator) {
   emscripten::class_<ADSRModulator>("ADSRModulator")
+    .constructor<>()
     .constructor<int>()
-    .constructor<int, float, float, float, float, float>()
     .function("modulateAmp", &ADSRModulator::ModulateAmp)
     .function("setXA", &ADSRModulator::SetXA)
     .function("setXD", &ADSRModulator::SetXD)
     .function("setYS", &ADSRModulator::SetYS)
-    .function("setXR", &ADSRModulator::SetXR);
+    .function("setXR", &ADSRModulator::SetXR)
+    .function("setYA", &ADSRModulator::SetYA)
+    .function("setStage", &ADSRModulator::SetStage)
+    .function("getStage", &ADSRModulator::GetStage);
 }

@@ -5,28 +5,29 @@ class SynthWorklet extends AudioWorkletProcessor {
   constructor() {
     super();
     this.kernel = Module();
-    this.voiceManager = new this.kernel.VoiceManager(sampleRate, 64);
+    const numOfVoices = 64;
+    const numOfOscillators = 4;
+    this.voiceManager = new this.kernel.VoiceManager(
+      sampleRate,
+      numOfVoices,
+      numOfOscillators
+    );
 
     this.port.onmessage = this.handleEvents.bind(this);
     console.log("Worklet launched successfully");
   }
 
   handleEvents({ data }) {
-    console.log(data);
     if (data.name === "NoteOn") {
       this.voiceManager.onNoteOn(data.key);
     } else if (data.name === "NoteOff") {
       this.voiceManager.onNoteOff(data.key);
     } else if (data.name === "Envelope") {
-      if (data.key === "xa") {
-        this.voiceManager.setXA(data.value.xa);
-      } else if (data.key === "xd") {
-        this.voiceManager.setXD(data.value);
-      } else if (data.key === "ys") {
-        this.voiceManager.setYS(data.value);
-      } else if (data.key === "xr") {
-        this.voiceManager.setXR(data.value);
-      }
+      const { index, xa, xd, ys, xr, ya } = data.values;
+      this.voiceManager.updateEnvelope(index, xa, xd, ys, xr, ya);
+    } else if (data.name === "Level") {
+      const { index, value } = data.values;
+      this.voiceManager.updateLevel(index, value);
     }
   }
 

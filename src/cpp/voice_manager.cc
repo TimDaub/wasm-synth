@@ -1,40 +1,35 @@
 #include "voice_manager.h"
 
-VoiceManager::VoiceManager(int sampleRate, int numOfVoices) : voices() {
+VoiceManager::VoiceManager(int sampleRate, int numOfVoices,
+                           int numOfOscillators) : voices() {
   this->sampleRate = sampleRate;
   this->numOfVoices = numOfVoices;
+  this->numOfOscillators = numOfOscillators;
   this->voices.reserve(this->numOfVoices);
+
   for (int i = 0; i < this->numOfVoices; i++) {
-    this->voices.push_back(new Voice(sampleRate));
+    this->voices.push_back(new Voice(sampleRate, this->numOfOscillators));
   }
 }
 
-void VoiceManager::SetXA(float xa) {
-  this->xa = xa;
-  UpdateEnvelope();
+void VoiceManager::UpdateEnvelope(int i, float xa, float xd, float ys, float xr,
+                                  float ya) {
+  envelopes[i] = { xa, xd, ys, xr, ya };
+  SetEnvelope(i);
 }
 
-void VoiceManager::SetXD(float xd) {
-  this->xd = xd;
-  UpdateEnvelope();
-}
-
-void VoiceManager::SetYS(float ys) {
-  this->ys = ys;
-  UpdateEnvelope();
-}
-
-void VoiceManager::SetXR(float xr) {
-  this->xr = xr;
-  UpdateEnvelope();
-}
-
-void VoiceManager::UpdateEnvelope() {
+void VoiceManager::SetEnvelope(int i) {
   for (Voices::iterator it = this->voices.begin(); it != this->voices.end(); ++it) {
     Voice *v = *it;
     if (v->isActive) {
-      v->SetEnvelope(this->xa, this->xd, this->ys, this->xr);
+      v->SetEnvelope(i, envelopes[i]);
     }
+  }
+}
+
+void VoiceManager::SetAllEnvelopes() {
+  for (int i = 0; i < numOfOscillators; ++i) {
+    SetEnvelope(i);
   }
 }
 
@@ -43,16 +38,16 @@ void VoiceManager::OnNoteOn(int key) {
   v->key = key;
   v->iteration = 0;
   v->isActive = true;
-  v->m->ya = 1.0;
-  UpdateEnvelope();
-  v->m->stage = ADSRModulator::ENVELOPE_STAGE_ATTACK;
+  SetAllEnvelopes();
+  SetAllLevels();
+  v->SetStage(ADSRModulator::ENVELOPE_STAGE_ATTACK);
 }
 
 void VoiceManager::OnNoteOff(int key) {
   for (Voices::iterator it = this->voices.begin(); it != this->voices.end(); ++it) {
     Voice *v = *it;
     if (v->key == key && v->isActive) {
-      v->m->stage = ADSRModulator::ENVELOPE_STAGE_RELEASE;
+      v->SetStage(ADSRModulator::ENVELOPE_STAGE_RELEASE);
     }
   }
 }
@@ -72,15 +67,11 @@ vector<float> VoiceManager::NextSample(int bufferSize) {
   for (Voices::iterator it = this->voices.begin(); it != this->voices.end(); ++it) {
     Voice *v = *it;
   
-    if (v->m->stage == ADSRModulator::ENVELOPE_STAGE_OFF && v->isActive) {
-      v->isActive = false;
-      continue;
-    }
-
     if (v->isActive) {
-      vector<Point> voiceSample = v->NextSample(bufferSize);
+      vector<float> voiceSample = v->NextSample(bufferSize);
         for (int i = 0; i < bufferSize; i++) {
-          sample[i] += voiceSample[i].y * 0.1;
+          // TODO: Make total gain a UI element
+          sample[i] += voiceSample[i] * 0.1;
         }
     }
   }
@@ -88,16 +79,34 @@ vector<float> VoiceManager::NextSample(int bufferSize) {
   return sample;
 }
 
+void VoiceManager::UpdateLevel(int i, float value) {
+  levels[i] = value;
+  SetLevel(i);
+}
+
+void VoiceManager::SetLevel(int i) {
+  for (Voices::iterator it = this->voices.begin(); it != this->voices.end(); ++it) {
+    Voice *v = *it;
+    if (v->isActive) {
+      v->SetLevel(i, levels[i]);
+    }
+  }
+}
+
+void VoiceManager::SetAllLevels() {
+  for (int i = 0; i < numOfOscillators; ++i) {
+    SetLevel(i);
+  }
+}
+
 #include <emscripten/bind.h>
 EMSCRIPTEN_BINDINGS(VoiceManager) {
   emscripten::class_<VoiceManager>("VoiceManager")
-    .constructor<int, int>()
+    .constructor<int, int, int>()
     .function("onNoteOn", &VoiceManager::OnNoteOn)
     .function("onNoteOff", &VoiceManager::OnNoteOff)
     .function("nextSample", &VoiceManager::NextSample)
-    .function("setXA", &VoiceManager::SetXA)
-    .function("setXD", &VoiceManager::SetXD)
-    .function("setYS", &VoiceManager::SetYS)
-    .function("setXR", &VoiceManager::SetXR);
+    .function("updateLevel", &VoiceManager::UpdateLevel)
+    .function("updateEnvelope", &VoiceManager::UpdateEnvelope);
   emscripten::register_vector<float>("vector<float>");
 }

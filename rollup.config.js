@@ -39,7 +39,8 @@ module.exports = [
       babel({
         exclude: "node_modules/**"
       }),
-      resolve({ browser: true }),
+      // NOTE: `main: false` allows npm link'ed packages to be resolved too.
+      resolve({ main: false, browser: true }),
       // NOTE: styled-components won't compile without this configuration of
       // commonjs: https://github.com/styled-components/styled-components/issues/1654#issuecomment-441151140
       commonjs({
