@@ -101,13 +101,13 @@ export default class SynthAdapter {
         name: "Envelope",
         values: Object.assign(
           { index: oscIndex },
-          SynthAdapter.calcEnvelopeMapping(values)
+          this.calcEnvelopeMapping(values)
         )
       });
     };
   }
 
-  static calcEnvelopeMapping(values) {
+  calcEnvelopeMapping(values) {
     // TODO: Put into constants file
     const microseconds = 1000 * 1000;
 

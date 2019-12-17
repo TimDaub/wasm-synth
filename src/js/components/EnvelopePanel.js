@@ -4,6 +4,7 @@ import EnvelopeGraph from "react-envelope-graph";
 import Flex from "react-styled-flexbox";
 import Knob from "react-simple-knob";
 
+import { TimeKnob, DecibelKnob } from "./Knobs";
 import {
   theme,
   BorderList,
@@ -11,8 +12,7 @@ import {
   List,
   Element,
   Row,
-  Toggle,
-  OscillatorElement
+  Toggle
 } from "./UIComponents";
 
 const styles = {
@@ -63,7 +63,8 @@ export default class EnvelopePanel extends React.Component {
 
     this.state = {
       // TODO: When finalizing the interface, make this state variable adjustable
-      oscSelected: 0
+      oscSelected: 0,
+      envelope: null
     };
   }
 
@@ -72,17 +73,21 @@ export default class EnvelopePanel extends React.Component {
       synth: {
         onEnvelopeChange,
         onLevelChange,
-        envelope: { xa, xd, ys, xr }
+        calcEnvelopeMapping,
+        envelope: { xa: defaultXa, xd: defaultXd, ys: defaultYs, xr: defaultXr }
       }
     } = this.props;
-    const { oscSelected } = this.state;
+    const { oscSelected, envelope } = this.state;
+    const mappedEnvelope = calcEnvelopeMapping(
+      envelope || this.props.synth.envelope
+    );
 
     return (
       <Panel>
-        <List width="15%" directionColumn={true}>
+        <List width="10%" directionColumn>
           {/*https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2019/01/25-Bright-Neon-Color-Palettes11.jpg*/}
           {Object.keys(listTheme).map((k, i) => (
-            <OscillatorElement key={k}>
+            <Element justifySpaceAround itemsCenter key={k}>
               <Knob
                 onChange={v => onLevelChange(i)(Math.abs(v + 100) / 100)}
                 name="Level"
@@ -94,20 +99,20 @@ export default class EnvelopePanel extends React.Component {
                 transform={p => parseInt(p * 50, 10) - 50}
                 style={{
                   fontSize: 35,
-                  height: "80%",
+                  height: "1.1em",
                   color: listTheme[k].color
                 }}
               />
               <Toggle bg={listTheme[k].bg} color={listTheme[k].color}>
                 A
               </Toggle>
-            </OscillatorElement>
+            </Element>
           ))}
         </List>
         <EnvelopeGraph
           style={{
-            width: "100%",
-            padding: "10px",
+            minWidth: "68%",
+            padding: ".5%",
             backgroundColor: theme.bg,
             borderRadius: theme.radius.light,
             borderTop: "1px solid black",
@@ -116,22 +121,28 @@ export default class EnvelopePanel extends React.Component {
             borderBottom: "3px solid black"
           }}
           styles={styles}
-          defaultXa={xa}
-          defaultXd={xd}
-          defaultYs={ys}
-          defaultXr={xr}
+          defaultXa={defaultXa}
+          defaultXd={defaultXd}
+          defaultYs={defaultYs}
+          defaultXr={defaultXr}
           ratio={{
             xa: 0.25,
             xd: 0.25,
             xr: 0.25
           }}
-          onChange={onEnvelopeChange(oscSelected)}
+          onChange={envelope =>
+            this.setState({ envelope }) ||
+            onEnvelopeChange(oscSelected)(envelope)
+          }
         />
-        <BorderList width="40%" directionColumn={true}>
-          <Row />
-          <Row />
-          <Row />
-          <Row />
+        <BorderList width="20%" directionColumn>
+          {/*https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2019/01/25-Bright-Neon-Color-Palettes11.jpg*/}
+          <Row justifySpaceAround itemsCenter>
+            <TimeKnob name="Attack" value={mappedEnvelope.xa} />
+            <TimeKnob name="Decay" value={mappedEnvelope.xd} />
+            <DecibelKnob name="Sustain" value={mappedEnvelope.ys} />
+            <TimeKnob name="Release" value={mappedEnvelope.xr} />
+          </Row>
         </BorderList>
       </Panel>
     );

@@ -148,7 +148,7 @@ export const Footer = styled.footer`
 `;
 
 export const Panel = styled(Flex)`
-  height: 30vh;
+  font-family: ${props => props.theme.fonts.display};
   border-radius: ${props => props.theme.radius.heavy};
   background-color: rgba(0, 0, 0, 0.5);
   padding: ${props => props.theme.margin.light};
@@ -167,11 +167,11 @@ export const List = styled(Flex)`
   width: ${props => props.width};
 `;
 
-export const BorderList = styled(List)`
-  border: 1px solid black;
-`;
+// TODO: We should put a proper border around this. Currently first-child won't
+// work...
+export const BorderList = styled(List)``;
 
-export const Row = styled.div`
+export const Row = styled(Flex)`
   height: 25%;
   color: ${props => props.theme.white};
   background-color: ${props => props.theme.bg};
@@ -197,12 +197,6 @@ export const Element = styled(Row)`
   }
 `;
 
-export const OscillatorElement = styled(Element)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 export const Toggle = styled.div`
   display: flex;
   justify-content: center;
@@ -213,8 +207,22 @@ export const Toggle = styled.div`
   width: 25px;
   font-size: 10px;
   border-radius: ${props => props.theme.radius.light};
-  font-family: ${props => props.theme.fonts.display};
   font-weight: bold;
   cursor: pointer;
   user-select: none;
+`;
+
+export const StyledKnob = styled(Flex)`
+  min-width: 25%;
+  position: relative;
+  font-size: 0.7em;
+
+  &::before {
+    content: "${props => props.name}";
+    font-size: 0.5em;
+    color: ${props => props.theme.secondary};
+    position: absolute;
+    top: -1.5em;
+    left: 1em;
+  }
 `;
