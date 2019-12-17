@@ -8,7 +8,6 @@ import {
   theme,
   BorderList,
   Panel,
-  StyledGraph,
   List,
   Element,
   Row,
@@ -105,23 +104,29 @@ export default class EnvelopePanel extends React.Component {
             </OscillatorElement>
           ))}
         </List>
-        <StyledGraph>
-          <EnvelopeGraph
-            styles={styles}
-            width="100%"
-            height="20%"
-            defaultXa={xa}
-            defaultXd={xd}
-            defaultYs={ys}
-            defaultXr={xr}
-            ratio={{
-              xa: 0.25,
-              xd: 0.25,
-              xr: 0.25
-            }}
-            onChange={onEnvelopeChange(oscSelected)}
-          />
-        </StyledGraph>
+        <EnvelopeGraph
+          style={{
+            width: "100%",
+            padding: "10px",
+            backgroundColor: theme.bg,
+            borderRadius: theme.radius.light,
+            borderTop: "1px solid black",
+            borderLeft: "1px solid black",
+            borderRight: "1px solid black",
+            borderBottom: "3px solid black"
+          }}
+          styles={styles}
+          defaultXa={xa}
+          defaultXd={xd}
+          defaultYs={ys}
+          defaultXr={xr}
+          ratio={{
+            xa: 0.25,
+            xd: 0.25,
+            xr: 0.25
+          }}
+          onChange={onEnvelopeChange(oscSelected)}
+        />
         <BorderList width="40%" directionColumn={true}>
           <Row />
           <Row />

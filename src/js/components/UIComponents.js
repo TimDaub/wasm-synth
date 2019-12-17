@@ -163,17 +163,6 @@ export const Panel = styled(Flex)`
   }
 `;
 
-export const StyledGraph = styled.div`
-  width: 100%;
-  padding: 10px;
-  background-color: ${props => props.theme.bg};
-  border-radius: ${props => props.theme.radius.light};
-  border-top: 1px solid black;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
-  border-bottom: 3px solid black;
-`;
-
 export const List = styled(Flex)`
   width: ${props => props.width};
 `;
