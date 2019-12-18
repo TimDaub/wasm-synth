@@ -7,7 +7,7 @@ Voice::Voice(int sampleRate, int numOfOscillators) : oscillators(), modulators()
   this->oscillators.reserve(this->numOfOscillators);
   this->modulators.reserve(this->numOfOscillators);
   for (int i = 0; i < this->numOfOscillators; i++) {
-    this->oscillators.push_back(new Oscillator(SAW_DIGITAL, sampleRate));
+    this->oscillators.push_back(new Oscillator(TRIANGLE, sampleRate));
     this->modulators.push_back(new ADSRModulator(sampleRate));
   }
 }

@@ -75,6 +75,9 @@ vector<Point> Oscillator::NextSample(int key, int iteration, int bufferSize) {
       case SAW_64:
         y = SinoidSawWave(x, 64);
         break;
+      case TRIANGLE:
+        y = DigitalTriangleWave(x);
+        break;
       default:
         // TODO: Throw error here
         break;
@@ -83,6 +86,10 @@ vector<Point> Oscillator::NextSample(int key, int iteration, int bufferSize) {
   }
   
   return buffer;
+}
+
+float Oscillator::DigitalTriangleWave(float x) {
+  return abs(DigitalSawWave(x));
 }
 
 // NOTE: In the spectrum analyzer, this wave has some minor frequencies too,

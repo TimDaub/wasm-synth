@@ -39,6 +39,7 @@ private:
   float SinoidSquareWave(float x, int factor);
   float SinoidSawWave(float x, int factor);
   float DigitalSawWave(float x);
+  float DigitalTriangleWave(float x);
 
 public:
   Oscillator();
