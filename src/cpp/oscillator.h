@@ -37,6 +37,8 @@ private:
   friend class VoiceManager;
   float DigitalSquareWave(float x);
   float SinoidSquareWave(float x, int factor);
+  float SinoidSawWave(float x, int factor);
+  float DigitalSawWave(float x);
 
 public:
   Oscillator();
