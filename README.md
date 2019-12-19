@@ -37,3 +37,7 @@ To build:
 ## License
 
 MIT
+
+## Third Party resources Licenses
+
+- Caret from [Freepik](https://www.flaticon.com/de/autoren/freepik) from [Flaticon](https://www.flaticon.com)

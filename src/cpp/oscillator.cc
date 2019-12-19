@@ -104,6 +104,7 @@ float Oscillator::SinoidSawWave(float x, int factor) {
   factor *= 2;
   float y = 0.0;
   for (int i = 1; i <= factor; ++i) {
+    // TODO: This might not be correct and we should remove the modulo opperation
     if (i % 2 == 1) {
       y += pow(-1, i) * (sin(x * i) / i);
     }

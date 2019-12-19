@@ -5,6 +5,7 @@ import Flex from "react-styled-flexbox";
 import Knob from "react-simple-knob";
 
 import { TimeKnob, DecibelKnob } from "./Knobs";
+import WaveGraph from "./WaveGraph";
 import {
   theme,
   BorderList,
@@ -142,6 +143,9 @@ export default class EnvelopePanel extends React.Component {
             <TimeKnob name="Decay" value={mappedEnvelope.xd} />
             <DecibelKnob name="Sustain" value={mappedEnvelope.ys} />
             <TimeKnob name="Release" value={mappedEnvelope.xr} />
+          </Row>
+          <Row justifySpaceAround itemsCenter>
+            <WaveGraph />
           </Row>
         </BorderList>
       </Panel>

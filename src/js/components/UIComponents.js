@@ -4,6 +4,7 @@ import Flex from "react-styled-flexbox";
 
 import _ReactPianoStyle from "react-piano/dist/styles.css";
 import Plexifont from "../../assets/plexifont-webfont.woff";
+import caret from "../../assets/caret.png";
 
 // For reference: https://visme.co/blog/wp-content/uploads/2016/09/website10.jpg
 export const theme = {
@@ -224,5 +225,19 @@ export const StyledKnob = styled(Flex)`
     position: absolute;
     top: -1.5em;
     left: 1em;
+  }
+`;
+
+export const StyledSelect = styled.select`
+  appearance: none;
+  min-width: 100px;
+  height: 25px;
+  padding-left: 5px;
+  background: url(${caret}) 90% 60% / 10% no-repeat #000;
+  border: 1px solid ${props => props.theme.secondary};
+  color: ${props => props.theme.white};
+  border-radius: 0;
+  &:focus {
+    outline: none;
   }
 `;
