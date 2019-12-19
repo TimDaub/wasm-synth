@@ -3,7 +3,7 @@ import React from "react";
 import Dygraph from "dygraphs";
 import Flex from "react-styled-flexbox";
 
-import { theme, StyledSelect } from "./UIComponents";
+import { StyledSelect } from "./UIComponents";
 
 let graph;
 
@@ -155,7 +155,8 @@ export default class WaveGraph extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { selected } = this.state;
-    if (prevState.selected !== selected) {
+    const { color } = this.props;
+    if (prevState.selected !== selected || prevProps.color !== color) {
       this.draw();
     }
   }
@@ -163,6 +164,7 @@ export default class WaveGraph extends React.Component {
   draw() {
     if (graph) graph.destroy();
 
+    const { color } = this.props;
     const wave = this.genWave();
     graph = new Dygraph(this.refs.graph, wave, {
       strokeWidth: 2,
@@ -172,7 +174,7 @@ export default class WaveGraph extends React.Component {
       axisLabelWidth: 0,
       yLabelWidth: 0,
       height: 40,
-      color: theme.secondary
+      color
     });
   }
 
@@ -181,9 +183,10 @@ export default class WaveGraph extends React.Component {
   }
 
   render() {
+    const { color } = this.props;
     return (
       <Flex style={{ width: "auto" }} justifySpaceAround itemsCenter>
-        <StyledSelect onChange={this.handleChange}>
+        <StyledSelect color={color} onChange={this.handleChange}>
           {Object.keys(funs).map(k => (
             <option key={k}>{k}</option>
           ))}

@@ -221,10 +221,10 @@ export const StyledKnob = styled(Flex)`
   &::before {
     content: "${props => props.name}";
     font-size: 0.5em;
-    color: ${props => props.theme.secondary};
+    color: ${props => props.color};
     position: absolute;
     top: -1.5em;
-    left: 1em;
+    left: 0.75em;
   }
 `;
 
@@ -234,7 +234,7 @@ export const StyledSelect = styled.select`
   height: 25px;
   padding-left: 5px;
   background: url(${caret}) 90% 60% / 10% no-repeat #000;
-  border: 1px solid ${props => props.theme.secondary};
+  border: 1px solid ${props => props.color};
   color: ${props => props.theme.white};
   border-radius: 0;
   &:focus {

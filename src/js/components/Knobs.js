@@ -6,7 +6,7 @@ import { StyledKnob } from "./UIComponents";
 export class TimeKnob extends React.Component {
   render() {
     let unit = "ms";
-    let { value, name } = this.props;
+    let { value, name, color } = this.props;
     // TODO: Put into constants file
     const milliseconds = 1000;
 
@@ -28,6 +28,7 @@ export class TimeKnob extends React.Component {
         justifySpaceAround
         itemsCenter
         name={name}
+        color={color}
       >{`${value} ${unit}`}</StyledKnob>
     );
   }
@@ -35,7 +36,7 @@ export class TimeKnob extends React.Component {
 
 export class DecibelKnob extends React.Component {
   render() {
-    let { value, name } = this.props;
+    let { value, name, color } = this.props;
 
     value = parseInt((value - 1) * 100, 10);
 
@@ -44,6 +45,7 @@ export class DecibelKnob extends React.Component {
         justifySpaceAround
         itemsCenter
         name={name}
+        color={color}
       >{`${value} dB`}</StyledKnob>
     );
   }
