@@ -1,5 +1,4 @@
 //@format
-import Module from "../bundle-wasm.js";
 
 class SynthWorklet extends AudioWorkletProcessor {
   constructor() {
@@ -38,18 +37,11 @@ class SynthWorklet extends AudioWorkletProcessor {
   }
 
   process(inputs, outputs, parameters) {
-    const output = outputs[0];
-    for (
-      let channel = 0, numberOfChannels = output.length;
-      channel < numberOfChannels;
-      channel++
-    ) {
-      const outputChannel = output[channel];
-
-      const sample = this.voiceManager.nextSample(outputChannel.length);
-      for (let i = 0; i < sample.size(); i++) {
-        outputChannel[i] = sample.get(i);
-      }
+    // NOTE: We only use a single channel to generate our sounds.
+    const outputChannel = outputs[0][0];
+    const sample = this.voiceManager.nextSample(outputChannel.length);
+    for (let i = 0; i < sample.size(); i++) {
+      outputChannel[i] = sample.get(i);
     }
     return true;
   }

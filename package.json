@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "A synthesizer built from scratch in C++ and made available on the web through WebAssembly.",
   "scripts": {
-    "copy:worklets": "mkdir -p public/worklets && cp -a src/js/worklets/. public/worklets/",
     "build:cpp": "./scripts/build.sh",
     "build:js": "rollup -c",
     "build": "npm run build:cpp && npm run build:js && npm run copy:worklets",
@@ -16,15 +15,10 @@
   "watch": {
     "build:cpp": {
       "patterns": [
-        "src/cpp"
-      ],
-      "extensions": "cc,h"
-    },
-    "copy:worklets": {
-      "patterns": [
+        "src/cpp",
         "src/js/worklets"
       ],
-      "extensions": "js"
+      "extensions": "cc,h,js"
     }
   },
   "devDependencies": {
@@ -62,6 +56,7 @@
   "homepage": "https://github.com/TimDaub/wasm-synth#readme",
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
+    "audioworklet-polyfill": "https://github.com/TimDaub/audioworklet-polyfill#dist",
     "dygraphs": "^2.1.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",

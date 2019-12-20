@@ -16,7 +16,7 @@ module.exports = [
     input: "src/js/main.js",
     output: {
       dir: "public",
-      format: "es",
+      format: "cjs",
       sourcemap: !production
     },
     plugins: [
