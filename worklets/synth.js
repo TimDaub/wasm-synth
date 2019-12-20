@@ -28,6 +28,12 @@ class SynthWorklet extends AudioWorkletProcessor {
     } else if (data.name === "Level") {
       const { index, value } = data.values;
       this.voiceManager.updateLevel(index, value);
+    } else if (data.name === "WaveForm") {
+      const { index, value } = data.values;
+      this.voiceManager.updateWaveForm(index, value);
+    } else if (data.name === "Enable") {
+      const { index, value } = data.values;
+      this.voiceManager.enableOscillator(index, value);
     }
   }
 
