@@ -45,5 +45,4 @@ private:
   float xa, ya, xd, ys, xr, level, xMax;
   float Modulate(float x);
   static const float DECAY_UPPER_LIMIT, RELEASE_LOWER_LIMIT;
-  friend class VoiceManager;
 };
