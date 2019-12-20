@@ -3,6 +3,7 @@
 #include <map>
 
 #include "voice.h"
+#include "oscillator.h"
 
 class Voice;
 struct EnvelopePreset;
@@ -30,4 +31,6 @@ public:
   vector<float> NextSample(int bufferSize);
   void UpdateLevel(int i, float value);
   void UpdateEnvelope(int i, float xa, float xd, float ys, float xr, float ya);
+  void UpdateWaveForm(int i, int w);
+  void EnableOscillator(int i, bool b);
 };

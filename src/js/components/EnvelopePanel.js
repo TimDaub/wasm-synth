@@ -50,33 +50,43 @@ export default class EnvelopePanel extends React.Component {
       oscSelected: 0,
       oscillators: [
         {
+          enabled: true,
           label: "a",
           color: "#FAFAFA",
           bg: theme.secondary,
-          envelope
+          envelope,
+          waveForm: 0
         },
         {
+          enabled: true,
           label: "b",
           color: "#FAFAFA",
           bg: "#2274A5",
-          envelope
+          envelope,
+          waveForm: 0
         },
         {
+          enabled: true,
           label: "c",
           color: "#FAFAFA",
           bg: "#F2D0A4",
-          envelope
+          envelope,
+          waveForm: 0
         },
         {
+          enabled: true,
           label: "d",
           color: "#FAFAFA",
           bg: "#83B692",
-          envelope
+          envelope,
+          waveForm: 0
         }
       ]
     };
 
     this.handleEnvelopeChange = this.handleEnvelopeChange.bind(this);
+    this.handleWaveFormChange = this.handleWaveFormChange.bind(this);
+    this.handleEnable = this.handleEnable.bind(this);
   }
 
   handleEnvelopeChange(envelope) {
@@ -90,6 +100,28 @@ export default class EnvelopePanel extends React.Component {
     this.setState({ oscillators });
   }
 
+  handleWaveFormChange(waveForm) {
+    const {
+      synth: { onWaveFormChange }
+    } = this.props;
+    let { oscillators, oscSelected } = this.state;
+    oscillators[oscSelected].waveForm = waveForm;
+    onWaveFormChange(oscSelected, waveForm);
+    this.setState({ oscillators });
+  }
+
+  handleEnable(i) {
+    return () => {
+      const {
+        synth: { onEnableOscillator }
+      } = this.props;
+      const { oscillators } = this.state;
+      oscillators[i].enabled = !oscillators[i].enabled;
+      onEnableOscillator(i, oscillators[i].enabled);
+      this.setState({ oscillators });
+    };
+  }
+
   render() {
     const {
       synth: { onLevelChange, calcEnvelopeMapping }
@@ -97,8 +129,9 @@ export default class EnvelopePanel extends React.Component {
     const { oscSelected, oscillators } = this.state;
     const selected = oscillators[oscSelected];
     const mappedEnvelope = calcEnvelopeMapping(selected.envelope);
+    const color = selected.enabled ? selected.bg : theme.fg;
 
-    styles.line.stroke = selected.bg;
+    styles.line.stroke = color;
 
     return (
       <Panel>
@@ -119,7 +152,7 @@ export default class EnvelopePanel extends React.Component {
                 name="Level"
                 unit="dB"
                 defaultPercentage={0.5}
-                bg={elem.bg}
+                bg={elem.enabled ? elem.bg : theme.fg}
                 fg={elem.color}
                 mouseSpeed={5}
                 transform={p => parseInt(p * 50, 10) - 50}
@@ -129,7 +162,11 @@ export default class EnvelopePanel extends React.Component {
                   color: elem.color
                 }}
               />
-              <Toggle bg={elem.bg} color={elem.color}>
+              <Toggle
+                onClick={this.handleEnable(i)}
+                bg={elem.enabled ? elem.bg : theme.fg}
+                color={elem.color}
+              >
                 {elem.label.toUpperCase()}
               </Toggle>
             </Element>
@@ -161,29 +198,21 @@ export default class EnvelopePanel extends React.Component {
         <BorderList width="20%" directionColumn>
           {/*https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2019/01/25-Bright-Neon-Color-Palettes11.jpg*/}
           <Row justifySpaceAround itemsCenter>
-            <TimeKnob
-              color={selected.bg}
-              name="Attack"
-              value={mappedEnvelope.xa}
-            />
-            <TimeKnob
-              color={selected.bg}
-              name="Decay"
-              value={mappedEnvelope.xd}
-            />
+            <TimeKnob color={color} name="Attack" value={mappedEnvelope.xa} />
+            <TimeKnob color={color} name="Decay" value={mappedEnvelope.xd} />
             <DecibelKnob
-              color={selected.bg}
+              color={color}
               name="Sustain"
               value={mappedEnvelope.ys}
             />
-            <TimeKnob
-              color={selected.bg}
-              name="Release"
-              value={mappedEnvelope.xr}
-            />
+            <TimeKnob color={color} name="Release" value={mappedEnvelope.xr} />
           </Row>
           <Row justifySpaceAround itemsFlexStart>
-            <WaveGraph color={selected.bg} />
+            <WaveGraph
+              value={selected.waveForm}
+              onChange={this.handleWaveFormChange}
+              color={color}
+            />
           </Row>
         </BorderList>
       </Panel>

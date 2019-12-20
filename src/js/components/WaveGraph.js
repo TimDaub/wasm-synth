@@ -36,91 +36,109 @@ const genDigitalSawWave = x =>
 
 const funs = {
   SINE: {
+    num: 0,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: Math.sin
   },
   SQUARE_D: {
+    num: 1,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: x => (Math.sin(x) >= 0 ? 1 : -1)
   },
   SQUARE_3: {
+    num: 2,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSquareWave(3)
   },
   SQUARE_4: {
+    num: 3,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSquareWave(4)
   },
   SQUARE_6: {
+    num: 4,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSquareWave(6)
   },
   SQUARE_8: {
+    num: 5,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSquareWave(8)
   },
   SQUARE_16: {
+    num: 6,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSquareWave(16)
   },
   SQUARE_32: {
+    num: 7,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSquareWave(32)
   },
   SQUARE_64: {
+    num: 8,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSquareWave(64)
   },
   SAW_D: {
+    num: 9,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genDigitalSawWave
   },
   SAW_3: {
+    num: 10,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSawWave(3)
   },
   SAW_4: {
+    num: 11,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSawWave(4)
   },
   SAW_6: {
+    num: 12,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSawWave(6)
   },
   SAW_8: {
+    num: 13,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSawWave(8)
   },
   SAW_16: {
+    num: 14,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSawWave(16)
   },
   SAW_32: {
+    num: 15,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSawWave(32)
   },
   SAW_64: {
+    num: 16,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: genSawWave(64)
   },
   TRIANGLE: {
+    num: 17,
     resolution: 0.1,
     limit: 2 * Math.PI,
     fun: x => Math.abs(genDigitalSawWave(x))
@@ -130,12 +148,15 @@ const funs = {
 export default class WaveGraph extends React.Component {
   constructor(props) {
     super(props);
+
+    const selected = this.getWaveFormByIndex(props.value);
     this.state = {
-      selected: "SINE"
+      selected
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.draw = this.draw.bind(this);
+    this.getWaveFormByIndex = this.getWaveFormByIndex.bind(this);
   }
 
   genWave() {
@@ -155,10 +176,20 @@ export default class WaveGraph extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { selected } = this.state;
-    const { color } = this.props;
+    const { color, value } = this.props;
+
     if (prevState.selected !== selected || prevProps.color !== color) {
       this.draw();
     }
+
+    const newSelected = this.getWaveFormByIndex(value);
+    if (newSelected !== selected) {
+      this.setState({ selected: newSelected });
+    }
+  }
+
+  getWaveFormByIndex(i) {
+    return Object.keys(funs).filter(k => funs[k].num === i)[0];
   }
 
   draw() {
@@ -179,14 +210,24 @@ export default class WaveGraph extends React.Component {
   }
 
   handleChange({ target }) {
-    this.setState({ selected: target.value });
+    const selected = target.value;
+
+    if (typeof this.props.onChange === "function") {
+      this.props.onChange(funs[selected].num);
+    }
+    this.setState({ selected });
   }
 
   render() {
     const { color } = this.props;
+    const { selected } = this.state;
     return (
       <Flex style={{ width: "auto" }} justifySpaceAround itemsCenter>
-        <StyledSelect color={color} onChange={this.handleChange}>
+        <StyledSelect
+          value={selected}
+          color={color}
+          onChange={this.handleChange}
+        >
           {Object.keys(funs).map(k => (
             <option key={k}>{k}</option>
           ))}

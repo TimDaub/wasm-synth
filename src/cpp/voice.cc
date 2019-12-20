@@ -7,7 +7,7 @@ Voice::Voice(int sampleRate, int numOfOscillators) : oscillators(), modulators()
   this->oscillators.reserve(this->numOfOscillators);
   this->modulators.reserve(this->numOfOscillators);
   for (int i = 0; i < this->numOfOscillators; i++) {
-    this->oscillators.push_back(new Oscillator(TRIANGLE, sampleRate));
+    this->oscillators.push_back(new Oscillator(Oscillator::SINE, sampleRate));
     this->modulators.push_back(new ADSRModulator(sampleRate));
   }
 }
@@ -34,6 +34,10 @@ vector<float> Voice::NextSample(int bufferSize) {
 
   for (int i = 0; i < numOfOscillators; ++i) {
     Oscillator *o = oscillators[i];
+    if (!o->GetStatus()) {
+      // NOTE: If the oscillator is deactivated, we do not compute any values.
+      continue;
+    }
     ADSRModulator *m = modulators[i];
     vector<Point> newFrame = o->NextSample(key, iteration, bufferSize);
     modsOn[i] = m->GetStage() != ADSRModulator::ENVELOPE_STAGE_OFF;
@@ -65,6 +69,16 @@ void Voice::SetEnvelope(int i, EnvelopePreset envelope) {
   m->SetYA(envelope.ya);
 }
 
+void Voice::SetWaveForm(int i, Oscillator::WaveForm w) {
+  Oscillator *o = oscillators[i];
+  o->SetWaveForm(w);
+}
+
+void Voice::EnableOscillator(int i, bool b) {
+  Oscillator *o = oscillators[i];
+  o->SetStatus(b);
+}
+
 #include <emscripten/bind.h>
 EMSCRIPTEN_BINDINGS(Voice) {
   emscripten::class_<Voice>("Voice")
@@ -73,5 +87,7 @@ EMSCRIPTEN_BINDINGS(Voice) {
     .function("nextSample", &Voice::NextSample)
     .function("setEnvelope", &Voice::SetEnvelope)
     .function("setLevel", &Voice::SetLevel)
-    .function("setStage", &Voice::SetStage);
+    .function("setStage", &Voice::SetStage)
+    .function("setWaveForm", &Voice::SetWaveForm)
+    .function("enableOscillator", &Voice::EnableOscillator);
 }

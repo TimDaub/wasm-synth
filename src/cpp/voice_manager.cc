@@ -99,6 +99,21 @@ void VoiceManager::SetAllLevels() {
   }
 }
 
+void VoiceManager::UpdateWaveForm(int i, int w) {
+  Oscillator::WaveForm wCast = static_cast<Oscillator::WaveForm>(w);
+  for (Voices::iterator it = this->voices.begin(); it != this->voices.end(); ++it) {
+    Voice *v = *it;
+    v->SetWaveForm(i, wCast);
+  }
+}
+
+void VoiceManager::EnableOscillator(int i, bool b) {
+  for (Voices::iterator it = this->voices.begin(); it != this->voices.end(); ++it) {
+    Voice *v = *it;
+    v->EnableOscillator(i, b);
+  }
+}
+
 #include <emscripten/bind.h>
 EMSCRIPTEN_BINDINGS(VoiceManager) {
   emscripten::class_<VoiceManager>("VoiceManager")
@@ -107,6 +122,8 @@ EMSCRIPTEN_BINDINGS(VoiceManager) {
     .function("onNoteOff", &VoiceManager::OnNoteOff)
     .function("nextSample", &VoiceManager::NextSample)
     .function("updateLevel", &VoiceManager::UpdateLevel)
-    .function("updateEnvelope", &VoiceManager::UpdateEnvelope);
+    .function("updateEnvelope", &VoiceManager::UpdateEnvelope)
+    .function("updateWaveForm", &VoiceManager::UpdateWaveForm)
+    .function("enableOscillator", &VoiceManager::EnableOscillator);
   emscripten::register_vector<float>("vector<float>");
 }

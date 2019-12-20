@@ -2,10 +2,7 @@
 #include <numeric>
 
 #include "oscillator.h"
-#include "voice_manager.h"
 #include "adsr_modulator.h"
-
-class Oscillator;
 
 typedef vector<Oscillator *> Oscillators;
 typedef vector<ADSRModulator *> ADSRModulators;
@@ -14,9 +11,9 @@ class Voice {
 private:
   Oscillators oscillators;
   ADSRModulators modulators;
-  friend class VoiceManager;
 
 public:
+  // TODO: Make all parameters private again
   int key, iteration, numOfOscillators;
   bool isActive;
   Voice();
@@ -25,4 +22,6 @@ public:
   void SetEnvelope(int i, EnvelopePreset envelope);
   void SetLevel(int i, float value);
   void SetStage(ADSRModulator::EnvelopeStage stage);
+  void SetWaveForm(int i, Oscillator::WaveForm w);
+  void EnableOscillator(int i, bool b);
 };

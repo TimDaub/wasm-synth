@@ -12,6 +12,11 @@ Oscillator::Oscillator(WaveForm wave, int sampleRate) {
   this->wave = wave;
   this->sampleRate = sampleRate;
   level = 0;
+  status = true;
+}
+
+void Oscillator::SetStatus(bool s) {
+  status = s;
 }
 
 vector<Point> Oscillator::NextSample(int key, int iteration, int bufferSize) {
@@ -24,7 +29,7 @@ vector<Point> Oscillator::NextSample(int key, int iteration, int bufferSize) {
     //float tuning = pow(2.0, 1000/ 1200.0);
     float y = 0.0;
     switch(wave) {
-      case SIN:
+      case SINE:
         y = sin(x);
         break;
       case SQUARE_DIGITAL:
@@ -142,13 +147,23 @@ void Oscillator::SetLevel(float value) {
   level = value;
 }
 
+void Oscillator::SetWaveForm(WaveForm w) {
+  wave = w;
+}
+
+bool Oscillator::GetStatus() {
+  return status;
+}
 
 #include <emscripten/bind.h>
 EMSCRIPTEN_BINDINGS(Oscillator) {
   emscripten::class_<Oscillator>("Oscillator")
     .constructor<>()
-    .constructor<WaveForm, int>()
+    .constructor<Oscillator::WaveForm, int>()
     .function("nextSample", &Oscillator::NextSample)
     .function("frequencyConstant", &Oscillator::FrequencyConstant)
-    .function("setLevel", &Oscillator::SetLevel);
+    .function("setLevel", &Oscillator::SetLevel)
+    .function("setWaveForm", &Oscillator::SetWaveForm)
+    .function("setStatus", &Oscillator::SetStatus)
+    .function("getStatus", &Oscillator::GetStatus);
 }

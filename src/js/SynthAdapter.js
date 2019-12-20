@@ -35,6 +35,8 @@ export default class SynthAdapter {
     this.onNoteOn = this.onNoteOn.bind(this);
     this.onNoteOff = this.onNoteOff.bind(this);
     this.onLevelChange = this.onLevelChange.bind(this);
+    this.onWaveFormChange = this.onWaveFormChange.bind(this);
+    this.onEnableOscillator = this.onEnableOscillator.bind(this);
   }
 
   async init() {
@@ -93,18 +95,40 @@ export default class SynthAdapter {
     };
   }
 
-  onEnvelopeChange(oscIndex) {
+  // TODO: Can this be refactored to a simpler function (with two arguments)?
+  onEnvelopeChange(index) {
     return async values => {
       if (!(await this.init())) return;
 
       this.worklet.port.postMessage({
         name: "Envelope",
-        values: Object.assign(
-          { index: oscIndex },
-          this.calcEnvelopeMapping(values)
-        )
+        values: Object.assign({ index }, this.calcEnvelopeMapping(values))
       });
     };
+  }
+
+  async onWaveFormChange(index, value) {
+    if (!(await this.init())) return;
+
+    this.worklet.port.postMessage({
+      name: "WaveForm",
+      values: {
+        index,
+        value
+      }
+    });
+  }
+
+  async onEnableOscillator(index, value) {
+    if (!(await this.init())) return;
+
+    this.worklet.port.postMessage({
+      name: "Enable",
+      values: {
+        index,
+        value
+      }
+    });
   }
 
   calcEnvelopeMapping(values) {
