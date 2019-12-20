@@ -197,7 +197,7 @@ export default class EnvelopePanel extends React.Component {
         />
         <BorderList width="20%" directionColumn>
           {/*https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2019/01/25-Bright-Neon-Color-Palettes11.jpg*/}
-          <Row justifySpaceAround itemsCenter>
+          <Row style={{ "user-select": "none" }} justifySpaceAround itemsCenter>
             <TimeKnob color={color} name="Attack" value={mappedEnvelope.xa} />
             <TimeKnob color={color} name="Decay" value={mappedEnvelope.xd} />
             <DecibelKnob
