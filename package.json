@@ -56,6 +56,7 @@
   "homepage": "https://github.com/TimDaub/wasm-synth#readme",
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
+    "@tonejs/midi": "^2.0.15",
     "audioworklet-polyfill": "https://github.com/TimDaub/audioworklet-polyfill#dist",
     "dygraphs": "^2.1.0",
     "react": "^16.11.0",

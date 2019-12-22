@@ -22,7 +22,7 @@ module.exports = [
     plugins: [
       url({
         // by default, rollup-plugin-url will not handle font files
-        include: ["**/*.woff", "**/*.woff2", "**/*.png"],
+        include: ["**/*.woff", "**/*.woff2", "**/*.png", "**/*.mid"],
         // setting infinite limit will ensure that the files
         // are always bundled with the code, not copied to /dist
         limit: Infinity
