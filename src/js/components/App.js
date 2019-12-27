@@ -17,7 +17,6 @@ import {
   CustomReactPiano,
   ReactPianoStyle
 } from "./UIComponents";
-import queen from "../../assets/queen.mid";
 
 const firstNote = MidiNumbers.fromNote("c4");
 const lastNote = MidiNumbers.fromNote("b6");
@@ -36,18 +35,34 @@ export default class App extends React.Component {
     this.state = {
       active: []
     };
+
+    this.startMidi = this.startMidi.bind(this);
   }
 
-  async componentDidMount() {
-    const midi = await new Midi.fromUrl(queen);
-    const piano = midi.tracks[2].notes;
-    const mapped = piano.map(note => {
+  async startMidi() {
+    const res = await fetch(
+      `https://bitmidi.com/api/midi/search?q=${this.refs.search.value}&page=0`
+    );
+    const { result } = await res.json();
+    let url, midi;
+    console.log(result.total);
+    if (result.total > 0) {
+      url = result.results[0].downloadUrl;
+      midi = await new Midi.fromUrl(`https://bitmidi.com${url}`);
+    } else {
+      return;
+    }
+    const piano = midi.tracks.filter(
+      track => track.instrument.family === "piano"
+    )[0];
+    const mapped = piano.notes.map(note => {
       return {
         midiNumber: note.midi,
         time: note.time,
         duration: note.duration
       };
     });
+    time = mapped[0].time - 5;
 
     setInterval(() => {
       const active = mapped.filter(note => {
@@ -74,6 +89,8 @@ export default class App extends React.Component {
             <Logo>
               <h1>WASM SYNTH</h1>
             </Logo>
+            <input ref="search" type="text" placeholder="Search for a song" />
+            <button onClick={this.startMidi}>search</button>
             <EnvelopePanel synth={this.synth} />
           </Content>
           <Footer>

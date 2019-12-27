@@ -66,7 +66,7 @@ export default class SynthAdapter {
   }
 
   async onNoteOn(key) {
-    await this.init();
+    if (!(await this.init())) return;
 
     this.worklet.port.postMessage({
       name: "NoteOn",
@@ -75,10 +75,12 @@ export default class SynthAdapter {
   }
 
   onNoteOff(key) {
-    this.worklet.port.postMessage({
-      name: "NoteOff",
-      key
-    });
+    if (this.worklet) {
+      this.worklet.port.postMessage({
+        name: "NoteOff",
+        key
+      });
+    }
   }
 
   onLevelChange(index) {
