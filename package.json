@@ -5,7 +5,7 @@
   "scripts": {
     "build:cpp": "./scripts/build.sh",
     "build:js": "rollup -c",
-    "build": "npm run build:cpp && npm run build:js && npm run copy:worklets",
+    "build": "npm run build:cpp && npm run build:js",
     "watch:js": "rollup -c -w",
     "watch:cpp": "npm run build:cpp && npm-watch",
     "watch": "npm-run-all --parallel watch:js watch:cpp",

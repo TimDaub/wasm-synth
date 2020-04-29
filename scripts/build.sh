@@ -22,4 +22,5 @@ emcc src/cpp/*.cc \
 # NOTE: We concate the emscripten generated js and wasm file with the worklet
 # such that we don't have to import it later as an es6 module. This
 # achieves better cross-browser compatibility.
+mkdir public/worklets
 cat $DIR/main.js src/js/worklets/synth.js > public/worklets/synth.js
