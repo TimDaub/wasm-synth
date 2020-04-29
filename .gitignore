@@ -3,3 +3,5 @@ node_modules
 public
 !public/index.html
 .DS_Store
+cert.pem
+key.pem

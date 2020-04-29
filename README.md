@@ -10,11 +10,10 @@ Installed and available on your shell:
 - [emscripten](https://emscripten.org/docs/getting_started/downloads.html)
 - [rollupjs](https://rollupjs.org/guide/en/)
 
-## Docs
+## Docs & Blog post
 
-As my goal with this project is to learn an entirely new field (music + C++),
-I'm trying to document all my gained knowledge. It's available as a journal
-[here](https://hackmd.io/fR86Sw1nSFGdeFmgirt7qw?view).
+My goal in doing this project was to learn audio programming. I wrote about it
+in [this blog post](https://timdaub.github.io/2020/02/19/wasm-synth/).
 
 ## Install
 
