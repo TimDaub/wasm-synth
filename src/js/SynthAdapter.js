@@ -1,5 +1,5 @@
 // @format
-const AudioContext = window.AudioContext || window.webkitAudioContext;
+import AudioContext from "standardized-audio-context";
 
 export default class SynthAdapter {
   constructor(path, moduleId, envelope) {
