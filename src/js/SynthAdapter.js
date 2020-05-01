@@ -1,5 +1,5 @@
 // @format
-import AudioContext from "standardized-audio-context";
+import { AudioContext, AudioWorkletNode } from "standardized-audio-context";
 
 export default class SynthAdapter {
   constructor(path, moduleId, envelope) {
