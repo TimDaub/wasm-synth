@@ -60,6 +60,16 @@ module.exports = [
             "isElement",
             "isValidElementType",
             "ForwardRef"
+          ],
+          "node_modules/automation-events/build/es5/bundle.js": [
+            "AutomationEventList",
+            "createCancelAndHoldAutomationEvent",
+            "createCancelScheduledValuesAutomationEvent",
+            "createExponentialRampToValueAutomationEvent",
+            "createLinearRampToValueAutomationEvent",
+            "createSetTargetAutomationEvent",
+            "createSetValueAutomationEvent",
+            "createSetValueCurveAutomationEvent"
           ]
         }
       }),

@@ -1,6 +1,5 @@
 // @format
 import "@babel/polyfill";
-import "audioworklet-polyfill";
 import React from "react";
 import ReactDOM from "react-dom";
 
