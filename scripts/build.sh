@@ -13,7 +13,6 @@ emcc src/cpp/*.cc \
   -O1 \
   -s WASM=1 \
   -s ALLOW_MEMORY_GROWTH=1 \
-  -s BINARYEN_ASYNC_COMPILATION=0 \
   -s SINGLE_FILE=1 \
   -s MODULARIZE=1 \
   --bind \

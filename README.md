@@ -30,6 +30,9 @@ $ npm i
 
 ## Run
 
+Before running the below specified commands, you'll have to set emsdk's
+environment variable as is detailed on the above linked page.
+
 For development:
 
 ``` $ npm run dev ```
