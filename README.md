@@ -20,6 +20,25 @@ explosion](https://en.wikipedia.org/w/index.php?title=Cambrian_explosion&oldid=9
 of webassembly-based browser languages have appeared, I'm currently trying to
 make WASM SYNTH work properly again.
 
+## Compatibility
+
+Since it seems that many browsers-vendors are arbitrarily changing APIs these
+days, I'm gonna keep track of WASM SYNTHs compatability here.
+
+|Commit|Chrome|Firefox|Safari|Brave|
+|---|---|---|---|---|
+c4379418bc1cfe116dbf6bc51e25a42fdaa9c6f3|✓ 81.0|✓ 76.0|✗ 13.0.4|✓ 1.8.86|
+
+### How are we currently testing?
+
+- `npm run dev` and open the displayed site in one of the above browsers
+- Hit some notes on your keyboard or by pressing with the mouse
+- Toggle some UI elements (e.g. toggle off an oscillator)
+
+### I know how to improve/automate testing!
+
+That's great! Any feedback or help is welcome! Please get in touch!
+
 ## Install
 
 To install:
