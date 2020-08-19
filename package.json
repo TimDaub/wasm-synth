@@ -49,7 +49,7 @@
     "music"
   ],
   "author": "Tim Daubenschuetz <tim.daubenschuetz@gmail.com>",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "bugs": {
     "url": "https://github.com/TimDaub/wasm-synth/issues"
   },

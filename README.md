@@ -62,7 +62,7 @@ To build:
 
 ## License
 
-MIT
+See [License](./LICENSE).
 
 ## Third Party resources Licenses
 
