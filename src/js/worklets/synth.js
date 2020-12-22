@@ -3,6 +3,7 @@
 class SynthWorklet extends AudioWorkletProcessor {
   constructor() {
     super();
+
     this.kernel = Module();
     const numOfVoices = 64;
     const numOfOscillators = 4;
@@ -13,7 +14,6 @@ class SynthWorklet extends AudioWorkletProcessor {
     );
 
     this.port.onmessage = this.handleEvents.bind(this);
-    console.log("Worklet launched successfully");
   }
 
   handleEvents({ data }) {
@@ -37,12 +37,14 @@ class SynthWorklet extends AudioWorkletProcessor {
   }
 
   process(inputs, outputs, parameters) {
-    // NOTE: We only use a single channel to generate our sounds.
     const outputChannel = outputs[0][0];
     const sample = this.voiceManager.nextSample(outputChannel.length);
+
     for (let i = 0; i < sample.size(); i++) {
       outputChannel[i] = sample.get(i);
     }
+
+    this.port.postMessage(outputChannel);
     return true;
   }
 }

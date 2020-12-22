@@ -39,12 +39,59 @@ export default class SynthAdapter {
     this.onEnableOscillator = this.onEnableOscillator.bind(this);
   }
 
+  startStream() {
+    const bitrate = 128; // in kbps
+    this.shine = new Shine({
+      samplerate: this.context.sampleRate,
+      bitrate,
+      channels: 1,
+      mode: Shine.MONO
+    });
+    this.conn = new WebSocket("wss://audio.daubenschuetz.de/webcast", "webcast");
+
+    this.conn.onopen = () => {
+      this.conn.send(
+        `{"type":"hello","data":{"mime":"audio/mpeg","user":"user","password":"pass","audio":{"channels":1,"samplerate":${
+          this.context.sampleRate
+        },"bitrate":${bitrate},"encoder":"libshine"}}}`
+      );
+    };
+    this.conn.onmessage = e => console.log(e.data);
+
+    let buf = new Uint8Array();
+    let totalBitsSent = 0;
+    this.worklet.port.onmessage = evt => {
+      const encodedData = this.shine.encode([evt.data]);
+
+      let newBuf = new Uint8Array(buf.length + encodedData.length);
+      newBuf.set(buf);
+      newBuf.set(encodedData, buf.length);
+      buf = newBuf;
+
+      const bufSizeBits = buf.length * buf.BYTES_PER_ELEMENT * 8;
+
+      if (
+        bufSizeBits > bitrate * 1000 &&
+        totalBitsSent < this.context.currentTime * bitrate * 1000
+      ) {
+        const toSend = buf.subarray(0, bitrate * 1000);
+
+        buf = buf.subarray(bitrate * 1000, buf.length);
+
+        totalBitsSent += toSend.length * toSend.BYTES_PER_ELEMENT * 8;
+        this.conn.send(toSend);
+      }
+    };
+  }
+
   async init() {
     if (!this.context) {
       this.context = new AudioContext();
       await this.context.audioWorklet.addModule(this.path);
       this.worklet = new AudioWorkletNode(this.context, this.moduleId);
       this.worklet.connect(this.context.destination);
+
+      this.startStream();
 
       // TODO: We assume 4 oscillators here, but actually we should define
       // them in a constants file

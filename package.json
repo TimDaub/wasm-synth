@@ -10,7 +10,8 @@
     "watch:cpp": "npm run build:cpp && npm-watch",
     "watch": "npm-run-all --parallel watch:js watch:cpp",
     "dev": "npm-run-all --parallel serve watch",
-    "serve": "serve public"
+    "serve": "serve public",
+    "deploy": "npm run build && rsync -avz ./public/* root@audio.daubenschuetz.de:/var/www/html/assets"
   },
   "watch": {
     "build:cpp": {
@@ -57,6 +58,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
     "dygraphs": "^2.1.0",
+    "lamejs": "1.2.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-envelope-graph": "^0.1.4",
