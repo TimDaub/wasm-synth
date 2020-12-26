@@ -24,4 +24,4 @@ emcc src/cpp/*.cc \
 # achieves better cross-browser compatibility.
 mkdir public/worklets
 cat $DIR/main.js src/js/worklets/synth.js > public/worklets/synth.js
-cp src/js/libshine.js public/libshine.js
+cp src/js/libvorbis.min.js public/libvorbis.min.js
