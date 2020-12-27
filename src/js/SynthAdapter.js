@@ -41,69 +41,32 @@ export default class SynthAdapter {
 
   startStream() {
     const bitrate = 128; // in kbps
-    const channels = 1;
-    this.encoder = new VorbisEncoder({
-      audioBitsPerSecond: bitrate * 1000
+    this.shine = new Shine({
+      samplerate: this.context.sampleRate,
+      bitrate,
+      channels: 1,
+      mode: Shine.MONO
     });
-    this.encoder.init(channels, this.context.sampleRate, 1.0);
-
-    this.conn = new WebSocket(
-      "wss://audio.daubenschuetz.de/webcast",
-      //"wss://localhost:8080",
-      "webcast"
-    );
+    this.conn = new WebSocket("wss://audio.daubenschuetz.de/webcast", "webcast");
 
     this.conn.onopen = () => {
       this.conn.send(
-        `{"type":"hello","data":{"mime":"audio/ogg","user":"user","password":"pass","audio":{"channels":${channels},"samplerate":${
+        `{"type":"hello","data":{"mime":"audio/mpeg","user":"user","password":"pass","audio":{"channels":1,"samplerate":${
           this.context.sampleRate
-        },"bitrate":${bitrate}}}}`
+        },"bitrate":${bitrate},"encoder":"libshine"}}}`
       );
     };
     this.conn.onmessage = e => console.log(e.data);
 
     let buf = new Uint8Array();
     let totalBitsSent = 0;
-
-    this.encoder.ondata = data => {
-      data = new Uint8Array(data);
-      let newBuf = new Uint8Array(buf.length + data.length);
-      newBuf.set(buf);
-      newBuf.set(data, buf.length);
-      buf = newBuf;
-    };
-
-    function getRandomInt(min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min)) + min;
-    }
-
-    function isEmpty(data, iter) {
-      for (let i = 0; i < iter; i++) {
-        const num = getRandomInt(0, data.length - 1);
-        const point = data[num];
-        if (point !== 0) {
-          return false;
-        }
-      }
-
-      return true;
-    }
-
     this.worklet.port.onmessage = evt => {
-      let data;
-      // TODO: Implement this server side
-      if (isEmpty(evt.data, 10)) {
-        data = new Float32Array(evt.data.length);
-        for (let i = 0; i < data.length; i++) {
-          data[i] = Math.random() / 10000;
-        }
-      } else {
-        data = evt.data;
-      }
+      const encodedData = this.shine.encode([evt.data]);
 
-      this.encoder.encode([data.buffer], data.length, channels);
+      let newBuf = new Uint8Array(buf.length + encodedData.length);
+      newBuf.set(buf);
+      newBuf.set(encodedData, buf.length);
+      buf = newBuf;
 
       const bufSizeBits = buf.length * buf.BYTES_PER_ELEMENT * 8;
 
