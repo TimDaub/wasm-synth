@@ -11,9 +11,9 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 11.6.0
-      - uses: lovasoa/setup-emscripten@master
+      - uses: mymindstorm/setup-emsdk@v9
         with:
-          emscripten-version: "1.39.0"
+          version: "1.39.0"
       - run: npm i -g rollup
       - run: npm i
       - run: npm run build
