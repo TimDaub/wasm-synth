@@ -8,7 +8,7 @@
 The following tools are required for spinning up a local instance of WASM
 SYNTH. Click on the links to view the installation manuals:
 
-- [emscripten](https://emscripten.org/docs/getting_started/downloads.html)
+- [emscripten](https://emscripten.org/docs/getting_started/downloads.html) (`emcc version 1.39.0`)
 - [rollupjs](https://rollupjs.org/guide/en/)
 
 ## Docs & Blog post
