@@ -3925,7 +3925,7 @@ class SynthWorklet extends AudioWorkletProcessor {
   }
 
   process(inputs, outputs, parameters) {
-    // NOTE: We only use a single channel to generate our sounds.
+    // NOTE: We only use a single channel to generate our sounds, will be up-mixed to stereo.
     const outputChannel = outputs[0][0];
     const sample = this.voiceManager.nextSample(outputChannel.length);
     for (let i = 0; i < sample.size(); i++) {
