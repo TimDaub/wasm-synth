@@ -43,7 +43,7 @@ export default class SynthAdapter {
     if (!this.context) {
       this.context = new AudioContext();
       await this.context.audioWorklet.addModule(this.path);
-      this.worklet = new AudioWorkletNode(this.context, this.moduleId);
+      this.worklet = new AudioWorkletNode(this.context, this.moduleId, { outputChannelCount: [1] });
       this.worklet.connect(this.context.destination);
 
       // TODO: We assume 4 oscillators here, but actually we should define
